@@ -40,20 +40,21 @@ vhigh = sortedMPG[391]
 print("low =",low,"med =",med,"high =",high, "very high =",vhigh)
 
 # Assigning new column based on threshold value for Problem 2 graphs
-# Needs to adjust the boundary conditions
+
 # low
 dataset.loc[mpg <= low, 'threshold'] = "low"
-
-dataset.loc[np.logical_and(mpg > low, mpg < high), 'threshold']= "med"
-
-dataset.loc[np.logical_and(mpg > med, mpg < vhigh), 'threshold']= "high"
+# med
+dataset.loc[np.logical_and(mpg > low, mpg <= med), 'threshold']= "med"
+# high
+dataset.loc[np.logical_and(mpg > med, mpg < high), 'threshold']= "high"
 # very high
-dataset.loc[mpg > high, 'threshold'] = "very high" 
+dataset.loc[mpg >= high, 'threshold'] = "very high" 
 
-#for i in np.nditer(mpg):
-#    if (i <= 17):
-#        dataset['thresholds'] = low
-#    dataset['thresholds']= 0
+sns.lmplot(x ="Displacement",y="Weight", data=dataset, fit_reg=False, hue='threshold', legend=False)
+
+plt.legend(loc='lower right')
+
+
 
 # Problem 2
 # Need to generate 49 plots
