@@ -18,6 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from pandas.plotting import scatter_matrix
 # drop Na to specify rows with question marks!!
 dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True)
 
@@ -39,7 +40,9 @@ high = sortedMPG[291]
 vhigh = sortedMPG[391]
 print("low =",low,"med =",med,"high =",high, "very high =",vhigh)
 
-# Assigning new column based on threshold value for Problem 2 graphs
+# Problem 2
+# Assigning new column based on threshold value for Problem 2 Graphs
+# Need to generate 49 plots
 
 # low
 dataset.loc[mpg <= low, 'threshold'] = "low"
@@ -54,14 +57,10 @@ sns.lmplot(x ="Displacement",y="Weight", data=dataset, fit_reg=False, hue='thres
 
 plt.legend(loc='lower right')
 
+# Actual plot with all variables against each other
+scatter_matrix(dataset.loc[:,'Cylinder':'Origin'], alpha=0.2, figsize=(20, 20))
 
 
-# Problem 2
-# Need to generate 49 plots
-
-#for pos, axis1 in enumerate(cyl):   # Pick a first col
-#    for axis2 in enumerate(disp[pos+1:]):   # Pick a later col
-#        plt.scatter(dataset.iloc[:, axis1], dataset.iloc[:, axis2])
 
    
 
