@@ -5,24 +5,18 @@ Created on Sun Sep 29 23:15:55 2019
 
 @author: armandnasserischool
 """
-# 1) Sort column, divide by 4 to find 4 threshold values find cutoff point after each division
-# 2) 49 scatter plots in total 7*7 for features not mpg
-# save information from low, med, high and create columns for each
-# scatter matrix or seaborn
-# one libary generates all 7 by 7, permutes all 
-# 3) Use the formula
-# 4) what 4 lines
-# OLS will always give you the best fit
-# Importing the libraries
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from pandas.plotting import scatter_matrix
 from numpy.linalg import inv
+from sklearn.model_selection import train_test_split
 # drop Na to specify rows with question marks!!
+# figure out how to add row of names
+# Import the dataset
 dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True)
-
+# Store each column into separate independent variables
 mpg = dataset.iloc[:,0].values
 cyl = dataset.iloc[:,1].values
 disp = dataset.iloc[:,2].values
@@ -54,7 +48,7 @@ dataset.loc[np.logical_and(mpg > med, mpg < high), 'threshold']= "high"
 # very high
 dataset.loc[mpg >= high, 'threshold'] = "very high" 
 
-#sns.lmplot(x ="Displacement",y="Weight", data=dataset, fit_reg=False, hue='threshold', legend=False)
+#sns.lmplot(x ="Weight",y="mpg", data=dataset, fit_reg=False, hue='threshold', legend=False)
 #sns.lmplot(x ="Weight",y="Horsepower", data=dataset, fit_reg=False, hue='threshold', legend=False)
 #plt.legend(loc='lower right')
 # Option 1
@@ -67,79 +61,93 @@ plt.legend(loc='lower right')
 
 
 
-# Problem 3
-# test works
-xxx = np.array([[1,1,1,1,1], [49,69,89,99,109]])
-yyyy = np.array([124,95,71,45,18])
-# Transpose goes into second argument
-X = np.transpose(xxx)
-# CAREFUL WITH INPUT
-exp1 = np.dot(xxx,X)
-expB = np.dot(yyyy,X)
-f = inv(exp1)
-finalRes = np.dot(f,expB)
+# Problem 3 Prototype Regression
 
-
-
-
-
+# Inserting a column of ones called bias
 dataset.insert(10, 'bias', 1)
-bias= dataset.iloc[:,10].values
+bias = dataset.iloc[:,10].values
 
-
+# Only used to split bias for appropriate dimensions
+bias_train, bias_test, mpg_train, mpg_test = train_test_split(bias, mpg, test_size = 0.2551)
 
 def linearReg(x,y):
-    # Add ones to x
-    combinedX = np.column_stack((bias, x))
+    # For ensuring correct dimension size for bias
+    if (x.size < 101 and y.size < 101):
+        combinedX = np.column_stack((bias_test, x))
+    else:
+        combinedX = np.column_stack((bias_train, x))
     # Transpose x
     Xtransposed = np.transpose(combinedX)
-    # First expression
-    A = np.dot(combinedX,Xtransposed)
-    # Second expression
-    # SOMETHING WRONG HERE
-    B = np.dot(Xtransposed,y)
-    # Inverse 
-    #inverse = inv(A)
+    # First expression ok
+    expression1 = np.dot(Xtransposed,combinedX)
+    # inverse ok
+    inverse = inv(expression1)
+    # Second expression ok
+    expression2 = np.dot(Xtransposed,y)
+
+    result = np.dot(inverse,expression2)
+    w0 = result[0]
+    w1 = result[1]
     
-    # result
-    #result = np.dot(inverse,B)
+    # Eventually need to optimize this
+    # Need to modify so that it provides multiple 0,1,2,3
+    plt.scatter(x,y, color = "m", marker = "o", s = 30) 
+    plt.plot(x, w0+w1*x, color = "green")
+    plt.show()
+  
     
-    #print(A.shape, A.ndim)
-    print(B.shape, B.ndim)
-    return A
-    
-# x and y
-testReg = linearReg(wt,mpg)
-print(linearReg(wt,mpg))
-   
-#z = np.ones((392,1))
-#combined= np.column_stack((z, wt))
-#print(combined)
+    return w0,w1
+
+#testReg = linearReg(wt,mpg)
+#plt.scatter(wt, mpg, color = "m", marker = "o", s = 30) 
+#plt.plot(wt, testReg[0] + testReg[1]*wt, color = "green")
+#plt.show()
+#print(testReg)
 
 
-# sample data weight vs mpg
-#x = dataset.iloc[:, 4].values
-#y = dataset.iloc[:, 0].values
-#x = np.array([0,1,2,3,4,5,6,7,8,9])
-#y = np.array([1,2,3,5,7,8,9,10,11,12])
+# Problem 4
+# Splitting up training and test data for each independent variable
+# Not really using numerical mpg train and test, simply placeholder variables
 
-# Least Squares Formula
-# size coefficient
-#k = np.size(x)
+# Cylinder vs. mpg
+#cyl_train, cyl_test, mpg_train1, mpg_test1 = train_test_split(cyl, mpg, test_size = 0.2551)
+# Displacement vs. mpg
+#disp_train, disp_test, mpg_train, mpg_test = train_test_split(disp, mpg, test_size = 0.2551)
+# Horsepower vs. mpg
+hp_train, hp_test, mpg_train, mpg_test = train_test_split(hp, mpg, test_size = 0.2551)
+# Weight vs. mpg
+wt_train, wt_test, mpg_train, mpg_test = train_test_split(wt, mpg, test_size = 0.2551)
+# Acceleration vs. mpg
+#acc_train, acc_test, mpg_train5, mpg_test5 = train_test_split(acc, mpg, test_size = 0.2551)
+# Year vs. mpg
+#yr_train, yr_test, mpg_train6, mpg_test6= train_test_split(yr, mpg, test_size = 0.2551)
+# Origin vs. mpg
+#org_train, org_test, mpg_train7, mpg_test7= train_test_split(org, mpg, test_size = 0.2551)
 
-# average of the data
-#xbar = np.mean(x)
-#ybar = np.mean(y)
+#################################
+trainReg = linearReg(wt_train, mpg_train)
+plt.scatter(wt_train, mpg_train, color = "m", marker = "o", s = 30) 
 
-# Formula
-#numerator = np.sum((x*y)) - (k*xbar*ybar)
-#denominator= np.sum((x*x)) - k*(xbar*xbar) 
+plt.plot(wt_train, trainReg[0] + trainReg[1]*wt_train, color = "green")
+plt.title('mpg vs. weight (Training set)')
+plt.xlabel('weight')
+plt.ylabel('mpg')
+plt.show()
 
-# Change B to w
-#B = numerator/denominator
-#B0 = ybar - B*xbar
-#print(B)
-#print(B0)
+testReg = linearReg(wt_test, mpg_test)
+plt.scatter(wt_test, mpg_test, color = "m", marker = "o", s = 30) 
+
+plt.plot(wt_test, testReg[0] + testReg[1]*wt_test, color = "green")
+plt.title('mpg vs. weight (Test set)')
+plt.xlabel('weight')
+plt.ylabel('mpg')
+plt.show()
+################################3
+
+
+
+
+
 
     
 # Visualising the Test set results
