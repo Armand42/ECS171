@@ -68,14 +68,16 @@ dataset.insert(10, 'bias', 1)
 bias = dataset.iloc[:,10].values
 
 # Only used to split bias for appropriate dimensions
-bias_train, bias_test, mpg_train, mpg_test = train_test_split(bias, mpg, test_size = 0.2551)
+#bias_train, bias_test, mpg_train, mpg_test = train_test_split(bias, mpg, test_size = 0.2551)
+biasTrain = bias[0:292]
+biasTest = bias[292:392]
 
 def linearReg(x,y):
     # For ensuring correct dimension size for bias
     if (x.size < 101 and y.size < 101):
-        combinedX = np.column_stack((bias_test, x))
+        combinedX = np.column_stack((biasTest, x))
     else:
-        combinedX = np.column_stack((bias_train, x))
+        combinedX = np.column_stack((biasTrain, x))
     # Transpose x
     Xtransposed = np.transpose(combinedX)
     # First expression ok
@@ -107,24 +109,41 @@ def linearReg(x,y):
 
 # Problem 4
 # Splitting up training and test data for each independent variable
-# Not really using numerical mpg train and test, simply placeholder variables
+# mpg train-test data
+mpg_train = mpg[0:292]
+mpg_test = mpg[292:392]
 
 # Cylinder vs. mpg
-#cyl_train, cyl_test, mpg_train1, mpg_test1 = train_test_split(cyl, mpg, test_size = 0.2551)
-# Displacement vs. mpg
-#disp_train, disp_test, mpg_train, mpg_test = train_test_split(disp, mpg, test_size = 0.2551)
-# Horsepower vs. mpg
-hp_train, hp_test, mpg_train, mpg_test = train_test_split(hp, mpg, test_size = 0.2551)
-# Weight vs. mpg
-wt_train, wt_test, mpg_train, mpg_test = train_test_split(wt, mpg, test_size = 0.2551)
-# Acceleration vs. mpg
-#acc_train, acc_test, mpg_train5, mpg_test5 = train_test_split(acc, mpg, test_size = 0.2551)
-# Year vs. mpg
-#yr_train, yr_test, mpg_train6, mpg_test6= train_test_split(yr, mpg, test_size = 0.2551)
-# Origin vs. mpg
-#org_train, org_test, mpg_train7, mpg_test7= train_test_split(org, mpg, test_size = 0.2551)
+cyl_train = cyl[0:292]
+cyl_test = cyl[292:392]
 
+# Displacement vs. mpg
+disp_train = disp[0:292]
+disp_test = disp[292:392]
+
+# Horsepower vs. mpg
+hp_train = hp[0:292]
+hp_test = hp[292:392]
+
+# Weight vs. mpg
+wt_train = wt[0:292]
+wt_test = wt[292:392]
+
+# Acceleration vs. mpg
+acc_train = acc[0:292]
+acc_test = acc[292:392]
+
+# Year vs. mpg
+yr_train = yr[0:292]
+yr_test = yr[292:392]
+
+# Origin vs. mpg
+org_train = org[0:292]
+org_test = org[292:392]
+
+# Remember trainReg1, and trainReg2 return different w0,w1 values
 #################################
+
 trainReg = linearReg(wt_train, mpg_train)
 plt.scatter(wt_train, mpg_train, color = "m", marker = "o", s = 30) 
 
@@ -143,6 +162,25 @@ plt.xlabel('weight')
 plt.ylabel('mpg')
 plt.show()
 ################################3
+
+
+trainReg2 = linearReg(hp_train, mpg_train)
+plt.scatter(hp_train, mpg_train, color = "m", marker = "o", s = 30) 
+
+plt.plot(hp_train, trainReg2[0] + trainReg2[1]*hp_train, color = "green")
+plt.title('mpg vs. hp (Training set)')
+plt.xlabel('hp')
+plt.ylabel('mpg')
+plt.show()
+
+testReg2 = linearReg(hp_test, mpg_test)
+plt.scatter(hp_test, mpg_test, color = "m", marker = "o", s = 30) 
+
+plt.plot(hp_test, testReg2[0] + testReg2[1]*hp_test, color = "green")
+plt.title('mpg vs. hp (Test set)')
+plt.xlabel('hp')
+plt.ylabel('mpg')
+plt.show()
 
 
 
