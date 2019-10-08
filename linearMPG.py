@@ -148,22 +148,35 @@ org_test = org[292:392]
 
 
 # deg 0
-#constant = biasTrain
+constant = biasTrain
 #constantTranspose = np.transpose(constant)
-#constantTerm1 = np.dot(constantTranspose,constant)
+#constantTerm1 = np.dot(constant,constantTranspose)
 #invertedConstant = inv(constantTerm1)
 #constantTerm2 = np.dot(constantTranspose,mpg_train)
 #constantResult = np.dot(invertedConstant,constantTerm2)
 
-# Comment out sns pairplot option 2 to see individual graphs
+# COMMENT OUT SNS PAIRPLOT option 2 to see individual graphs
 # Need to create test bias now
 # MSE
 # Rename variables pleassssse
+
 def linReg(x,y):
-    
+# degree 0
+    degreeZero = mpg.mean()
+    plt.axhline(y=degreeZero, color='y')
 
 # degree 1
-    n1 = np.column_stack((biasTrain, x))
+    # Checking sizes for bias for train or test
+    if (x.size < 101 and y.size < 101):
+        n1 = np.column_stack((biasTest, x))
+        n11 = np.column_stack((biasTest, x))
+        n111 = np.column_stack((biasTest, x))
+    else:
+        n1 = np.column_stack((biasTrain, x))
+        n11 = np.column_stack((biasTrain, x))
+        n111 = np.column_stack((biasTrain, x))
+    
+    #n1 = np.column_stack((biasTrain, x))
     n1Transposed = np.transpose(n1)
     n1Term1 = np.dot(n1Transposed,n1)
     invertedn1 = inv(n1Term1)
@@ -173,7 +186,7 @@ def linReg(x,y):
     w1 = degreeOne[1]
 
 # degree 2
-    n11 = np.column_stack((biasTrain, x))
+    #n11 = np.column_stack((biasTrain, x))
     n22 =np.column_stack((n11, x**2))
     n2Transposed = np.transpose(n22)
     n22Term1 = np.dot(n2Transposed,n22)
@@ -185,7 +198,7 @@ def linReg(x,y):
     w22 = degreeTwo[2]
 
 # degree 3 
-    n111 = np.column_stack((biasTrain, x))
+    #n111 = np.column_stack((biasTrain, x))
     n222 = np.column_stack((n111, x**2))
     n333 = np.column_stack((n222, x**3))
     n3Transposed = np.transpose(n333)
@@ -198,23 +211,33 @@ def linReg(x,y):
     w222 = degreeThree[2]
     w333 = degreeThree[3]
     
-    plt.scatter(x, y, color = "m", marker = "o", s = 30)
+    plt.scatter(x, y, color = "m", marker = "*", s = 30)
+    # Still need degree 0 plot
+    
     plt.plot(x,w0+x*w1, color = "red")
     plt.plot(x,w00+x*w11 +w22*x**2, color = "blue")
     plt.plot(x,w000+x*w111+ w222*x**2 + w333*x**3, color = "green")
-    plt.title('(Training set)')
+    #plt.title('(Training set)')
     plt.xlabel('input variable')
     plt.ylabel('mpg')
     plt.show()
 
 
-# Still need degree 0 line??
-testReg1 = linReg(cyl_train, mpg_train)
-testReg2 = linReg(disp_train, mpg_train)
-testReg3 = linReg(hp_train, mpg_train)
-testReg4 = linReg(wt_train, mpg_train)
-testReg5 = linReg(acc_train, mpg_train)
-testReg6 = linReg(yr_train, mpg_train)
-testReg7 = linReg(org_train, mpg_train)
+# Training Regressions
+trainReg1 = linReg(cyl_train, mpg_train)
+trainReg2 = linReg(disp_train, mpg_train)
+trainReg3 = linReg(hp_train, mpg_train)
+trainReg4 = linReg(wt_train, mpg_train)
+trainReg5 = linReg(acc_train, mpg_train)
+trainReg6 = linReg(yr_train, mpg_train)
+trainReg7 = linReg(org_train, mpg_train)
+# Testing Regressions
+testReg1 = linReg(cyl_test, mpg_test)
+testReg2 = linReg(disp_test, mpg_test)
+testReg3 = linReg(hp_test, mpg_test)
+testReg4 = linReg(wt_test, mpg_test)
+testReg5 = linReg(acc_test, mpg_test)
+testReg6 = linReg(yr_test, mpg_test)
+testReg7 = linReg(org_test, mpg_test)
 
 
