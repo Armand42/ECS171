@@ -80,7 +80,7 @@ bias = dataset.iloc[:,10].values
 #biasTrain = bias[0:292]
 #biasTest = bias[292:392]
 
-
+# Problem 3 Regressor
 def linearReg(x,y):
     # For ensuring correct dimension size for bias
     if (x.size < 101 and y.size < 101):
@@ -158,9 +158,7 @@ constant = biasTrain
 #constantResult = np.dot(invertedConstant,constantTerm2)
 
 # COMMENT OUT SNS PAIRPLOT option 2 to see individual graphs
-# Need to create test bias now
-# MSE
-# Rename variables pleassssse
+
 
 def linReg(x,y):
    
@@ -217,22 +215,61 @@ def linReg(x,y):
     plt.scatter(x, y, color = "black", marker = "*", s = 30)
     
     #print(mean_squared_error(degreeZero,degreeZero)) 
-    print("Oth Order MSE: ???")
-    print("1st Order MSE (Training):",mean_squared_error(y,w0+x*w1)) 
-    print("2nd Order MSE (Training):",mean_squared_error(y,w00+x*w11 +w22*x**2)) 
-    print("3rd Order MSE (Training):",mean_squared_error(y,w000+x*w111+ w222*x**2 + w333*x**3)) 
+    #print("Oth Order MSE: ???")
+    #print("1st Order MSE (Training):",mean_squared_error(y,w0+x*w1)) 
+    #print("2nd Order MSE (Training):",mean_squared_error(y,w00+x*w11 +w22*x**2)) 
+    #print("3rd Order MSE (Training):",mean_squared_error(y,w000+x*w111+ w222*x**2 + w333*x**3)) 
     
-        
+    
+   
 
-    plt.plot(x,w0+x*w1, color = "red")
-    plt.plot(x,w00+x*w11 +w22*x**2, color = "blue")
-    plt.plot(x,w000+x*w111+ w222*x**2 + w333*x**3, color = "green")
-    plt.title('(Training set)')
-    plt.xlabel('input variable')
-    plt.ylabel('mpg')
-    plt.show()
+
+    #plt.plot(x,w0+x*w1, color = "red")
+    #plt.plot(x,w00+x*w11 +w22*x**2, color = "blue")
+    #plt.plot(x,w000+x*w111+ w222*x**2 + w333*x**3, color = "green")
+    #plt.title('(Training set)')
+    #plt.xlabel('input')
+    #plt.ylabel('mpg')
+    #plt.show()
 #    
     return degreeZero, degreeOne, degreeTwo, degreeThree
+
+def plotTrainData(xtrain, ytrain):
+    # Takes in the return values of the training data
+    data = linReg(xtrain, ytrain)
+    
+    degreeZero = data[0]
+    
+    degreeOne = data[1]
+    degreeTwo = data[2]
+    degreeThree = data[3]
+    # Assigning weights to test data
+    w0 = degreeOne[0]
+    w1 = degreeOne[1]
+    
+    w00 = degreeTwo[0]
+    w11 = degreeTwo[1]
+    w22 = degreeTwo[2]
+    
+    w000 = degreeThree[0]
+    w111 = degreeThree[1]
+    w222 = degreeThree[2]
+    w333 = degreeThree[3]
+    
+    print("Oth Order MSE: ???")
+    print("1st Order MSE (Training):",mean_squared_error(ytrain,w0+xtrain*w1)) 
+    print("2nd Order MSE (Training):",mean_squared_error(ytrain,w00+xtrain*w11 +w22*xtrain**2)) 
+    print("3rd Order MSE (Training):",mean_squared_error(ytrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3)) 
+    
+    plt.plot(xtrain,w0+xtrain*w1, color = "red")
+    plt.plot(xtrain,w00+xtrain*w11 +w22*xtrain**2, color = "blue")
+    plt.plot(xtrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3, color = "green")
+    plt.title('(Training set)')
+    plt.xlabel('input')
+    plt.ylabel('mpg')
+    
+    plt.show()
+    
 
 def plotTestData(xtest,ytest):
     # Takes in the return values of the training data
@@ -256,6 +293,7 @@ def plotTestData(xtest,ytest):
     w333 = degreeThree[3]
     
     plt.scatter(xtest, ytest, color = "m", marker = "*", s = 30)
+    print("Oth Order MSE: ???")
     print("1st Order MSE (Testing):",mean_squared_error(ytest,w0+xtest*w1)) 
     print("2nd Order MSE (Testing):",mean_squared_error(ytest,w00+xtest*w11 +w22*xtest**2)) 
     print("3rd Order MSE (Testing):",mean_squared_error(ytest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3))
@@ -270,40 +308,75 @@ def plotTestData(xtest,ytest):
     plt.show()
     
 # Issues:
-    # FIX 1st order
+    
     # Are my MSEs correct?
     # How to calculate 0th order MSE
-    # How to calculate training error
+    
     
 # How to do 5 and 6
 # Dont forget that you commented out the big chart and testers!!!
 
+# Plotting Train and Test Regressions
 
-# Training Regressions
 print("Cylinder MSE:")
-trainReg1 = linReg(cyl_train, mpg_train)
+trainReg1 = plotTrainData(cyl_train,mpg_train)
+print("Cylinder MSE:")
+testReg1 = plotTestData(cyl_test, mpg_test)
+
 print("Displacement MSE:")
-trainReg2 = linReg(disp_train, mpg_train)
+trainReg2 = plotTrainData(disp_train,mpg_train)
+print("Displacement MSE:")
+testReg2 = plotTestData(disp_test, mpg_test)
+
 print("Horsepower MSE:")
-trainReg3 = linReg(hp_train, mpg_train)
+trainReg3 = plotTrainData(hp_train,mpg_train)
+print("Horsepower MSE:")
+testReg3 = plotTestData(hp_test, mpg_test)
+
 print("Weight MSE:")
-trainReg4 = linReg(wt_train, mpg_train)
+trainReg4 = plotTrainData(wt_train,mpg_train)
+print("Weight MSE:")
+testReg4 = plotTestData(wt_test, mpg_test)
+
 print("Acceleration MSE:")
-trainReg5 = linReg(acc_train, mpg_train)
+trainReg5 = plotTrainData(acc_train,mpg_train)
+print("Acceleration MSE:")
+testReg5 = plotTestData(acc_test, mpg_test)
+
 print("Year MSE:")
-trainReg6 = linReg(yr_train, mpg_train)
+trainReg6 = plotTrainData(yr_train,mpg_train)
+print("Year MSE:")
+testReg6 = plotTestData(yr_test, mpg_test)
+
 print("Origin MSE:")
-trainReg7 = linReg(org_train, mpg_train)
+trainReg7 = plotTrainData(org_train,mpg_train)
+print("Origin MSE:")
+testReg7 = plotTestData(org_test, mpg_test)
 
 
-# Testing Regressions
-#print("TESTING REGRESSIONS")
-#testReg1 = plotTestData(cyl_test, mpg_test)
-#testReg2 = plotTestData(disp_test, mpg_test)
-#testReg3 = plotTestData(hp_test, mpg_test)
-#testReg4 = plotTestData(wt_test, mpg_test)
-#testReg5 = plotTestData(acc_test, mpg_test)
-#testReg6 = plotTestData(yr_test, mpg_test)
-#testReg7 = plotTestData(org_test, mpg_test)
 
-#mean_squared_error(wt_train,wt_test) 
+# Problem 5
+# Using 392 for now need to exponent each column?
+# TESTING PHASE
+def multipleLinReg(x,y):
+    x = dataset.iloc[:,1:8]
+    
+    X = np.append(arr = np.ones((392, 1)).astype(int), values = x, axis = 1)
+    
+    Xtransposed = np.transpose(X)
+    
+    expression1 = np.dot(Xtransposed,X)
+    
+    inverse = inv(expression1)
+    # Second expression ok
+    expression2 = np.dot(Xtransposed,y)
+
+    result = np.dot(inverse,expression2)
+    
+    return Xtransposed
+
+M=multipleLinReg(dataset,1)
+
+
+
+
