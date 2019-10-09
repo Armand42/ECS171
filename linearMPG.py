@@ -13,6 +13,7 @@ from pandas.plotting import scatter_matrix
 from numpy.linalg import inv
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+from sklearn.utils import shuffle
 # drop Na to specify rows with question marks!!
 # figure out how to add row of names
 # Import the dataset
@@ -21,14 +22,14 @@ dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True)
 
 
 
-mpg = dataset.iloc[:,0].values
-cyl = dataset.iloc[:,1].values
-disp = dataset.iloc[:,2].values
-hp = dataset.iloc[:,3].values
-wt = dataset.iloc[:,4].values
-acc = dataset.iloc[:,5].values
-yr = dataset.iloc[:,6].values
-org= dataset.iloc[:,7].values
+mpg = shuffle(dataset.iloc[:,0].values, random_state = 0)
+cyl = shuffle(dataset.iloc[:,1].values, random_state = 0)
+disp = shuffle(dataset.iloc[:,2].values, random_state = 0)
+hp = shuffle(dataset.iloc[:,3].values, random_state = 0)
+wt = shuffle(dataset.iloc[:,4].values,random_state = 0)
+acc = shuffle(dataset.iloc[:,5].values, random_state = 0)
+yr = shuffle(dataset.iloc[:,6].values, random_state = 0)
+org= shuffle(dataset.iloc[:,7].values, random_state = 0)
 
 
 
@@ -38,7 +39,7 @@ sortedMPG = np.sort(mpg)
 low = sortedMPG[97]
 med = sortedMPG[194]
 high = sortedMPG[291]
-vhigh = sortedMPG[391]
+vhigh = sortedMPG[391] 
 print("low =",low,"med =",med,"high =",high, "very high =",vhigh)
 
 # Problem 2
@@ -60,10 +61,11 @@ dataset.loc[mpg >= high, 'threshold'] = "very high"
 # Option 1
 # Actual plot with all variables against each other
 #scatter_matrix(dataset.loc[:,'Cylinder':'Origin'], alpha=0.2, figsize=(20, 20))
-
+# DONT FORGET THISSSSSSSSS
 # Option 2
-sns.pairplot(dataset.loc[:,dataset.columns != 'mpg'], hue='threshold')
-plt.legend(loc='lower right')
+
+#sns.pairplot(dataset.loc[:,dataset.columns != 'mpg'], hue='threshold')
+#plt.legend(loc='lower right')
 
 
 
@@ -98,7 +100,7 @@ def linearReg(x,y):
     w0 = result[0]
     w1 = result[1]
     
-
+    print("1sssst Order MSE:",mean_squared_error(y,w0+x*w1)) 
     plt.show()
   
     
@@ -161,6 +163,7 @@ constant = biasTrain
 # Rename variables pleassssse
 
 def linReg(x,y):
+   
 # degree 0
     degreeZero = mpg.mean()
     plt.axhline(y=degreeZero, color='y')
@@ -211,33 +214,96 @@ def linReg(x,y):
     w222 = degreeThree[2]
     w333 = degreeThree[3]
     
-    plt.scatter(x, y, color = "m", marker = "*", s = 30)
-    # Still need degree 0 plot
+    plt.scatter(x, y, color = "black", marker = "*", s = 30)
     
+    #print(mean_squared_error(degreeZero,degreeZero)) 
+    print("Oth Order MSE: ???")
+    print("1st Order MSE (Training):",mean_squared_error(y,w0+x*w1)) 
+    print("2nd Order MSE (Training):",mean_squared_error(y,w00+x*w11 +w22*x**2)) 
+    print("3rd Order MSE (Training):",mean_squared_error(y,w000+x*w111+ w222*x**2 + w333*x**3)) 
+    
+        
+
     plt.plot(x,w0+x*w1, color = "red")
     plt.plot(x,w00+x*w11 +w22*x**2, color = "blue")
     plt.plot(x,w000+x*w111+ w222*x**2 + w333*x**3, color = "green")
-    #plt.title('(Training set)')
+    plt.title('(Training set)')
     plt.xlabel('input variable')
     plt.ylabel('mpg')
     plt.show()
+#    
+    return degreeZero, degreeOne, degreeTwo, degreeThree
+
+def plotTestData(xtest,ytest):
+    # Takes in the return values of the training data
+    data = linReg(xtest, ytest)
+    
+    degreeZero = data[0]
+    degreeOne = data[1]
+    degreeTwo = data[2]
+    degreeThree = data[3]
+    # Assigning weights to test data
+    w0 = degreeOne[0]
+    w1 = degreeOne[1]
+    
+    w00 = degreeTwo[0]
+    w11 = degreeTwo[1]
+    w22 = degreeTwo[2]
+    
+    w000 = degreeThree[0]
+    w111 = degreeThree[1]
+    w222 = degreeThree[2]
+    w333 = degreeThree[3]
+    
+    plt.scatter(xtest, ytest, color = "m", marker = "*", s = 30)
+    print("1st Order MSE (Testing):",mean_squared_error(ytest,w0+xtest*w1)) 
+    print("2nd Order MSE (Testing):",mean_squared_error(ytest,w00+xtest*w11 +w22*xtest**2)) 
+    print("3rd Order MSE (Testing):",mean_squared_error(ytest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3))
+   
+    plt.axhline(y=degreeZero, color='y')
+    plt.plot(xtest,w0+xtest*w1, color = "red")
+    plt.plot(xtest,w00+xtest*w11 +w22*xtest**2, color = "blue")
+    plt.plot(xtest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3, color = "green")
+    plt.title('(Testing set)')
+    plt.xlabel('input variable')
+    plt.ylabel('mpg')
+    plt.show()
+    
+# Issues:
+    # FIX 1st order
+    # Are my MSEs correct?
+    # How to calculate 0th order MSE
+    # How to calculate training error
+    
+# How to do 5 and 6
+# Dont forget that you commented out the big chart and testers!!!
 
 
 # Training Regressions
+print("Cylinder MSE:")
 trainReg1 = linReg(cyl_train, mpg_train)
+print("Displacement MSE:")
 trainReg2 = linReg(disp_train, mpg_train)
+print("Horsepower MSE:")
 trainReg3 = linReg(hp_train, mpg_train)
+print("Weight MSE:")
 trainReg4 = linReg(wt_train, mpg_train)
+print("Acceleration MSE:")
 trainReg5 = linReg(acc_train, mpg_train)
+print("Year MSE:")
 trainReg6 = linReg(yr_train, mpg_train)
+print("Origin MSE:")
 trainReg7 = linReg(org_train, mpg_train)
+
+
 # Testing Regressions
-testReg1 = linReg(cyl_test, mpg_test)
-testReg2 = linReg(disp_test, mpg_test)
-testReg3 = linReg(hp_test, mpg_test)
-testReg4 = linReg(wt_test, mpg_test)
-testReg5 = linReg(acc_test, mpg_test)
-testReg6 = linReg(yr_test, mpg_test)
-testReg7 = linReg(org_test, mpg_test)
+#print("TESTING REGRESSIONS")
+#testReg1 = plotTestData(cyl_test, mpg_test)
+#testReg2 = plotTestData(disp_test, mpg_test)
+#testReg3 = plotTestData(hp_test, mpg_test)
+#testReg4 = plotTestData(wt_test, mpg_test)
+#testReg5 = plotTestData(acc_test, mpg_test)
+#testReg6 = plotTestData(yr_test, mpg_test)
+#testReg7 = plotTestData(org_test, mpg_test)
 
-
+#mean_squared_error(wt_train,wt_test) 
