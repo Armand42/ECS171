@@ -14,12 +14,27 @@ from numpy.linalg import inv
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.utils import shuffle
-# drop Na to specify rows with question marks!!
-# figure out how to add row of names
-# Import the dataset
-dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True)
+
+# Import the dataset and add labels
+dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True, 
+                       names=["mpg","Cylinder","Displacement","Horsepower","Weight","Acceleration",
+                              "Year","Origin","Model"])
+# Remove all ?'s
+dataset = dataset.drop(dataset[dataset['Horsepower'] == '?'].index)
+# Rest indexes
+dataset = dataset.reset_index(drop=True)
+#option 2 but this will make Model column Nan
+#dataset=dataset.apply(pd.to_numeric, errors='coerce')
+dataset['Horsepower'] = dataset['Horsepower'].apply(pd.to_numeric, errors='coerce')
+
+
+
+
+#dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True)
 # Store each column into separate independent variables
 
+
+# ENSURE THIS WORKS AT ALLLLLLLLLLLLL COSTTSSSSS
 
 
 mpg = shuffle(dataset.iloc[:,0].values, random_state = 0)
@@ -109,7 +124,7 @@ def linearReg(x,y):
 
 # Problem 4
 # Splitting up training and test data for each independent variable
-# mpg train-test data
+
     
 biasTrain = bias[0:292]
 biasTest = bias[292:392]
@@ -146,16 +161,6 @@ org_train = org[0:292]
 org_test = org[292:392]
 
 
-
-
-
-# deg 0
-constant = biasTrain
-#constantTranspose = np.transpose(constant)
-#constantTerm1 = np.dot(constant,constantTranspose)
-#invertedConstant = inv(constantTerm1)
-#constantTerm2 = np.dot(constantTranspose,mpg_train)
-#constantResult = np.dot(invertedConstant,constantTerm2)
 
 # COMMENT OUT SNS PAIRPLOT option 2 to see individual graphs
 
@@ -356,27 +361,60 @@ testReg7 = plotTestData(org_test, mpg_test)
 
 
 # Problem 5
-# Using 392 for now need to exponent each column?
-# TESTING PHASE
+# Splitting entire dataset into training and test set and shuffling
+
+multiDataTrain = shuffle(dataset.iloc[:292, :],random_state = 3)
+multiDataTest = shuffle(dataset.iloc[292:392,:],random_state = 3)
+# Extracting columns 1 - 8 for specific features
+multiDataTrainFormat = multiDataTrain.iloc[:,1:8]
+multiDataTestFormat = multiDataTest.iloc[:,1:8]
+
+#print(multiDataTrainFormat.size)
+#print(multiDataTestFormat.size)
+
+def addColumn(df):
+    return dataset.join(df)
+    
+    
+
 def multipleLinReg(x,y):
-    x = dataset.iloc[:,1:8]
     
-    X = np.append(arr = np.ones((392, 1)).astype(int), values = x, axis = 1)
+    # degree 0
     
-    Xtransposed = np.transpose(X)
+    # degree 1
+    if (x.size == 2044 and y.size == 292):
+        addOnes = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)
+        addBias = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)
+    else:
+        addOnes = np.append(arr = np.ones((100, 1)).astype(int), values = x, axis = 1)
+        addBias = np.append(arr = np.ones((100, 1)).astype(int), values = x, axis = 1)
     
-    expression1 = np.dot(Xtransposed,X)
+    Xtransposed = np.transpose(addOnes)
+    
+    expression1 = np.dot(Xtransposed,addOnes)
     
     inverse = inv(expression1)
-    # Second expression ok
+    
     expression2 = np.dot(Xtransposed,y)
 
-    result = np.dot(inverse,expression2)
+    degreeOne = np.dot(inverse,expression2)
     
-    return Xtransposed
+    # degree 2
+    # Inserting still need to do this for test set
+    multiDataTrainFormat.insert(0, "Bias",biasTrain, True)
+    squaredDataset = multiDataTrainFormat**2
+    multiDataTrainFormat.insert(8, "CylinderSquared",squaredDataset['Cylinder'],True)
+    multiDataTrainFormat.insert(9, "DISPSquared",squaredDataset['Displacement'], True)
+    multiDataTrainFormat.insert(10, "HPSquared",squaredDataset['Horsepower'], True)
+    multiDataTrainFormat.insert(11, "WTSquared",squaredDataset['Weight'], True)
+    multiDataTrainFormat.insert(12, "ACCSquared",squaredDataset['Acceleration'], True)
+    multiDataTrainFormat.insert(13, "YRSquared",squaredDataset['Year'], True)
+    multiDataTrainFormat.insert(14, "ORGSquared",squaredDataset['Origin'], True)
+    return multiDataTrainFormat #degreeOne actual return value
 
-M=multipleLinReg(dataset,1)
+# Comment out 1 for now becuase it duplicating squared values
+M=multipleLinReg(multiDataTrainFormat,mpg_train)
 
-
+#M2=multipleLinReg(multiDataTestFormat,mpg_test)
 
 
