@@ -35,7 +35,7 @@ dataset['Horsepower'] = dataset['Horsepower'].apply(pd.to_numeric, errors='coerc
 
 
 # ENSURE THIS WORKS AT ALLLLLLLLLLLLL COSTTSSSSS
-
+# Shuffle dataset before splitting
 
 mpg = shuffle(dataset.iloc[:,0].values, random_state = 0)
 cyl = shuffle(dataset.iloc[:,1].values, random_state = 0)
@@ -240,6 +240,7 @@ def linReg(x,y):
     return degreeZero, degreeOne, degreeTwo, degreeThree
 
 def plotTrainData(xtrain, ytrain):
+    
     # Takes in the return values of the training data
     data = linReg(xtrain, ytrain)
     
@@ -266,6 +267,10 @@ def plotTrainData(xtrain, ytrain):
     print("2nd Order MSE (Training):",mean_squared_error(ytrain,w00+xtrain*w11 +w22*xtrain**2)) 
     print("3rd Order MSE (Training):",mean_squared_error(ytrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3)) 
     
+    # Sort for ensuring correct regression displays
+    xtrain = np.sort(xtrain)
+    ytrain = np.sort(ytrain)
+    
     plt.plot(xtrain,w0+xtrain*w1, color = "red")
     plt.plot(xtrain,w00+xtrain*w11 +w22*xtrain**2, color = "blue")
     plt.plot(xtrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3, color = "green")
@@ -278,6 +283,7 @@ def plotTrainData(xtrain, ytrain):
 
 def plotTestData(xtest,ytest):
     # Takes in the return values of the training data
+    
     data = linReg(xtest, ytest)
     
     degreeZero = data[0]
@@ -303,6 +309,10 @@ def plotTestData(xtest,ytest):
     print("2nd Order MSE (Testing):",mean_squared_error(ytest,w00+xtest*w11 +w22*xtest**2)) 
     print("3rd Order MSE (Testing):",mean_squared_error(ytest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3))
    
+    # Sort for ensuring correct regression displays
+    xtest = np.sort(xtest)
+    ytest = np.sort(ytest)
+    
     plt.axhline(y=degreeZero, color='y')
     plt.plot(xtest,w0+xtest*w1, color = "red")
     plt.plot(xtest,w00+xtest*w11 +w22*xtest**2, color = "blue")
@@ -362,59 +372,140 @@ testReg7 = plotTestData(org_test, mpg_test)
 
 # Problem 5
 # Splitting entire dataset into training and test set and shuffling
-
-multiDataTrain = shuffle(dataset.iloc[:292, :],random_state = 3)
-multiDataTest = shuffle(dataset.iloc[292:392,:],random_state = 3)
+saveOrgDataset = shuffle(dataset,random_state=0)
+multiDataTrain = saveOrgDataset.iloc[:292, :]     # Has first 292 elements
+multiDataTest = saveOrgDataset.iloc[292:392,:]   # Has next 100 elements
 # Extracting columns 1 - 8 for specific features
-multiDataTrainFormat = multiDataTrain.iloc[:,1:8]
+multiDataTrainFormat = multiDataTrain.iloc[:,1:8]                   # Columns 1-8
 multiDataTestFormat = multiDataTest.iloc[:,1:8]
 
-#print(multiDataTrainFormat.size)
-#print(multiDataTestFormat.size)
+# Formatting Training Dataset for 2nd Degree
 
-def addColumn(df):
-    return dataset.join(df)
+# x = dataset
+def degreeTwoHelperTrain(df):
     
+    df.insert(0, "Bias",biasTrain, True)
+    squaredDataset = df**2
+    df.insert(8, "CylinderSquared",squaredDataset['Cylinder'],True)
+    df.insert(9, "DISPSquared",squaredDataset['Displacement'], True)
+    df.insert(10, "HPSquared",squaredDataset['Horsepower'], True)
+    df.insert(11, "WTSquared",squaredDataset['Weight'], True)
+    df.insert(12, "ACCSquared",squaredDataset['Acceleration'], True)
+    df.insert(13, "YRSquared",squaredDataset['Year'], True)
+    df.insert(14, "ORGSquared",squaredDataset['Origin'], True)
     
+    return df
+def degreeTwoHelperTest(df):
+    
+    df.insert(0, "Bias",biasTest, True)
+    squaredDataset = df**2
+    df.insert(8, "CylinderSquared",squaredDataset['Cylinder'],True)
+    df.insert(9, "DISPSquared",squaredDataset['Displacement'], True)
+    df.insert(10, "HPSquared",squaredDataset['Horsepower'], True)
+    df.insert(11, "WTSquared",squaredDataset['Weight'], True)
+    df.insert(12, "ACCSquared",squaredDataset['Acceleration'], True)
+    df.insert(13, "YRSquared",squaredDataset['Year'], True)
+    df.insert(14, "ORGSquared",squaredDataset['Origin'], True)
+    
+    return df
 
-def multipleLinReg(x,y):
+# Formatting Testing Dataset for 2nd Degree
+#multiDataTestFormat.insert(0, "Bias",biasTest, True)
+#squaredDataset2 = multiDataTestFormat**2
+#multiDataTestFormat.insert(8, "CylinderSquared",squaredDataset2['Cylinder'],True)
+#multiDataTestFormat.insert(9, "DISPSquared",squaredDataset2['Displacement'], True)
+#multiDataTestFormat.insert(10, "HPSquared",squaredDataset2['Horsepower'], True)
+#multiDataTestFormat.insert(11, "WTSquared",squaredDataset2['Weight'], True)
+#multiDataTestFormat.insert(12, "ACCSquared",squaredDataset2['Acceleration'], True)
+#multiDataTestFormat.insert(13, "YRSquared",squaredDataset2['Year'], True)
+#multiDataTestFormat.insert(14, "ORGSquared",squaredDataset2['Origin'], True)
+
+
+# Maybe add extra parameter here to specify which dataset we use
+def multipleLinRegTrain(x,y,degree):
     
     # degree 0
+    # not done yet
     
-    # degree 1
-    if (x.size == 2044 and y.size == 292):
-        addOnes = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)
-        addBias = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)
-    else:
-        addOnes = np.append(arr = np.ones((100, 1)).astype(int), values = x, axis = 1)
-        addBias = np.append(arr = np.ones((100, 1)).astype(int), values = x, axis = 1)
+    if (degree == 1):
+        if (x.size < 2044 and y.size < 292):
+            addOnes = np.append(arr = np.ones((100, 1)).astype(int), values = x, axis = 1)  # 100 size
+        #addBiasTest = np.append(arr = np.ones((100, 1)).astype(int), values = x, axis = 1)
+        else:
+            addOnes = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)  # 292 size
+        #addBiasTrain = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)
+        
+        Xtransposed = np.transpose(addOnes)
+        expression1 = np.dot(Xtransposed,addOnes)
+        inverse = inv(expression1)
+        expression2 = np.dot(Xtransposed,y)
+        degreeOne = np.dot(inverse,expression2)
+        
+        ypred = degreeOne[0] + degreeOne[1]*x.iloc[:,1] +  degreeOne[2]*x.iloc[:,2] +  degreeOne[3]*x.iloc[:,3] +  degreeOne[4]*x.iloc[:,4] +  degreeOne[5]*x.iloc[:,5] +  degreeOne[6]*x.iloc[:,6] 
+        
+        return mean_squared_error(y,ypred)
     
-    Xtransposed = np.transpose(addOnes)
-    
-    expression1 = np.dot(Xtransposed,addOnes)
-    
-    inverse = inv(expression1)
-    
-    expression2 = np.dot(Xtransposed,y)
+    # Train only dataset 
+    elif (degree == 2):
+        if (x.size > 2043 and y.size > 290):                        # 292 size PROBLEM HERE 393 instead!!!
+            temp = degreeTwoHelperTrain(multiDataTrainFormat)
+            #temp = temp.iloc[:292, :]
+            multiTransposed = np.transpose(temp)
+            exp1 = np.dot(multiTransposed,temp)
+            invert = inv(exp1)
+            exp2 = np.dot(multiTransposed,y)
+            degreeTwo = np.dot(invert,exp2)                 
+            
+            b = multiDataTrainFormat
+            ypred = degreeTwo[0] + degreeTwo[1]*b.iloc[:,1] + degreeTwo[2]*b.iloc[:,2] + degreeTwo[3]*b.iloc[:,3] + degreeTwo[4]*b.iloc[:,4] + degreeTwo[5]*b.iloc[:,5] + degreeTwo[6]*b.iloc[:,6] + degreeTwo[7]*b.iloc[:,7] + degreeTwo[8]*b.iloc[:,8] + degreeTwo[9]*b.iloc[:,9] + degreeTwo[10]*b.iloc[:,10] + degreeTwo[11]*b.iloc[:,11] + degreeTwo[12]*b.iloc[:,12] + degreeTwo[13]*b.iloc[:,13] + degreeTwo[14]*b.iloc[:,14]        
+            
+            
+            mean_squared_error(y,ypred)
+            
+            return  mean_squared_error(y,ypred)
+        
+        
+        else: 
+            temp = degreeTwoHelperTest(multiDataTestFormat)        # 100 size
+            multiTransposed = np.transpose(temp)
+            exp1 = np.dot(multiTransposed,temp)
+            invert = inv(exp1)
+            exp2 = np.dot(multiTransposed,y)
+            degreeTwo = np.dot(invert,exp2)
+            
+            b = multiDataTestFormat
+            ypred = degreeTwo[0] + degreeTwo[1]*b.iloc[:,1] + degreeTwo[2]*b.iloc[:,2] + degreeTwo[3]*b.iloc[:,3] + degreeTwo[4]*b.iloc[:,4] + degreeTwo[5]*b.iloc[:,5] + degreeTwo[6]*b.iloc[:,6] + degreeTwo[7]*b.iloc[:,7] + degreeTwo[8]*b.iloc[:,8] + degreeTwo[9]*b.iloc[:,9] + degreeTwo[10]*b.iloc[:,10] + degreeTwo[11]*b.iloc[:,11] + degreeTwo[12]*b.iloc[:,12] + degreeTwo[13]*b.iloc[:,13] + degreeTwo[14]*b.iloc[:,14]        
 
-    degreeOne = np.dot(inverse,expression2)
-    
-    # degree 2
-    # Inserting still need to do this for test set
-    multiDataTrainFormat.insert(0, "Bias",biasTrain, True)
-    squaredDataset = multiDataTrainFormat**2
-    multiDataTrainFormat.insert(8, "CylinderSquared",squaredDataset['Cylinder'],True)
-    multiDataTrainFormat.insert(9, "DISPSquared",squaredDataset['Displacement'], True)
-    multiDataTrainFormat.insert(10, "HPSquared",squaredDataset['Horsepower'], True)
-    multiDataTrainFormat.insert(11, "WTSquared",squaredDataset['Weight'], True)
-    multiDataTrainFormat.insert(12, "ACCSquared",squaredDataset['Acceleration'], True)
-    multiDataTrainFormat.insert(13, "YRSquared",squaredDataset['Year'], True)
-    multiDataTrainFormat.insert(14, "ORGSquared",squaredDataset['Origin'], True)
-    return multiDataTrainFormat #degreeOne actual return value
+            mean_squared_error(y,ypred)
+            
+            return  mean_squared_error(y,ypred)
+
+
+
+print()
+print("Problem 5 MSE 0th Order (Train): ???")
+print("Problem 5 MSE 0th Order (Test): ???") 
+print() 
+mseTrainDegree1 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,1)  
+mseTestDegree1 = multipleLinRegTrain(multiDataTestFormat,mpg_test,1) 
+print("Problem 5 MSE 1st Order (Train): ",mseTrainDegree1)
+print("Problem 5 MSE 2nd Order (Test): ",mseTestDegree1)
+# Problem 5 Calculated MSE
+print()
+mseTrainDegree2 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
+mseTestDegree2 = multipleLinRegTrain(multiDataTestFormat,mpg_test,2)
+print("Problem 5 MSE 2nd Order (Train): ", mseTrainDegree2)
+print("Problem 5 MSE 2nd Order (Test): ", mseTestDegree2)
+print()
 
 # Comment out 1 for now becuase it duplicating squared values
-M=multipleLinReg(multiDataTrainFormat,mpg_train)
-
+#P=multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
+#Z = M[0]+M[1]*4 + M[2]*400 + M[3]*150 + M[4]*3500 + M[5]*8 + M[6]*81 + M[7]*1 +M[8]*4**2 + M[9]*400**2 + M[10]*150**2 + M[11]*3500**2 + M[12]*8**2 + M[13]*81**2 +M[14]*1**2    
+#print(Z)
+#val = multipleLinRegTrain(multiDataTestFormat,mpg_test,2)
+#print(val)
+#print("MPG for problem 8:",val)
 #M2=multipleLinReg(multiDataTestFormat,mpg_test)
 
+# Problem 6 - What values are we regressing on
 
