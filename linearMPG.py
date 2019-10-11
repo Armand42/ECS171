@@ -55,7 +55,7 @@ low = sortedMPG[97]
 med = sortedMPG[194]
 high = sortedMPG[291]
 vhigh = sortedMPG[391] 
-print("low =",low,"med =",med,"high =",high, "very high =",vhigh)
+print("low mpg =",low,"med mpg =",med,"high mpg =",high, "very high mpg =",vhigh)
 
 # Problem 2
 # Assigning new column based on threshold value for Problem 2 Graphs
@@ -441,9 +441,11 @@ def multipleLinRegTrain(x,y,degree):
         expression2 = np.dot(Xtransposed,y)
         degreeOne = np.dot(inverse,expression2)
         
-        ypred = degreeOne[0] + degreeOne[1]*x.iloc[:,1] +  degreeOne[2]*x.iloc[:,2] +  degreeOne[3]*x.iloc[:,3] +  degreeOne[4]*x.iloc[:,4] +  degreeOne[5]*x.iloc[:,5] +  degreeOne[6]*x.iloc[:,6] 
+        temp = addOnes
         
-        return mean_squared_error(y,ypred)
+        pred = degreeOne[0] + degreeOne[1]*temp[:,1] + degreeOne[2]*temp[:,2] +  degreeOne[3]*temp[:,3] +  degreeOne[4]*temp[:,4] +  degreeOne[5]*temp[:,5] + degreeOne[6]*temp[:,6] + + degreeOne[7]*temp[:,7]
+        
+        return mean_squared_error(y,pred)
     
     # Train only dataset 
     elif (degree == 2):
@@ -456,15 +458,18 @@ def multipleLinRegTrain(x,y,degree):
             exp2 = np.dot(multiTransposed,y)
             degreeTwo = np.dot(invert,exp2)                 
             
+            # Why not just calculate it here for test
             b = multiDataTrainFormat
+            
+            
             ypred = degreeTwo[0] + degreeTwo[1]*b.iloc[:,1] + degreeTwo[2]*b.iloc[:,2] + degreeTwo[3]*b.iloc[:,3] + degreeTwo[4]*b.iloc[:,4] + degreeTwo[5]*b.iloc[:,5] + degreeTwo[6]*b.iloc[:,6] + degreeTwo[7]*b.iloc[:,7] + degreeTwo[8]*b.iloc[:,8] + degreeTwo[9]*b.iloc[:,9] + degreeTwo[10]*b.iloc[:,10] + degreeTwo[11]*b.iloc[:,11] + degreeTwo[12]*b.iloc[:,12] + degreeTwo[13]*b.iloc[:,13] + degreeTwo[14]*b.iloc[:,14]        
             
             
             mean_squared_error(y,ypred)
             
-            return  mean_squared_error(y,ypred)
+            return  degreeTwo, mean_squared_error(y,ypred)
         
-        
+        # The reason I might not need this is because I am not saving the original weights
         else: 
             temp = degreeTwoHelperTest(multiDataTestFormat)        # 100 size
             multiTransposed = np.transpose(temp)
@@ -478,8 +483,33 @@ def multipleLinRegTrain(x,y,degree):
 
             mean_squared_error(y,ypred)
             
-            return  mean_squared_error(y,ypred)
+            return degreeTwo, mean_squared_error(y,ypred)
 
+def multipleLinRegTest(xtest,ytest,degree):
+    # degree 0
+    
+    # degree 2
+    if (degree == 2):
+        values = multipleLinRegTrain(xtest,ytest,degree)
+        w00 = values[0][0]
+        w01 = values[0][1]
+        w02 = values[0][2]
+        w03 = values[0][3]
+        w04 = values[0][4]
+        w05 = values[0][5]
+        w06 = values[0][6]
+        w07 = values[0][7]
+        w08 = values[0][8]
+        w09 = values[0][9]
+        w10 = values[0][10]
+        w11 = values[0][11]
+        w12 = values[0][12]
+        w13 = values[0][13]
+        w14 = values[0][14]
+        
+        ypred = w00 + w01*xtest.iloc[:,1] + w02*xtest.iloc[:,2] + w03*xtest.iloc[:,3] + w04*xtest.iloc[:,4] + w05*xtest.iloc[:,5] + w06*xtest.iloc[:,6] + w07*xtest.iloc[:,7] + w08*xtest.iloc[:,8] + w09*xtest.iloc[:,9] + w10*xtest.iloc[:,10] + w11*xtest.iloc[:,11] + w12*xtest.iloc[:,12] + w13*xtest.iloc[:,13] + w14*xtest.iloc[:,14]        
+
+        return mean_squared_error(ytest,ypred)
 
 
 print()
@@ -489,23 +519,31 @@ print()
 mseTrainDegree1 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,1)  
 mseTestDegree1 = multipleLinRegTrain(multiDataTestFormat,mpg_test,1) 
 print("Problem 5 MSE 1st Order (Train): ",mseTrainDegree1)
-print("Problem 5 MSE 2nd Order (Test): ",mseTestDegree1)
+print("Problem 5 MSE 1st Order (Test): ",mseTestDegree1)
 # Problem 5 Calculated MSE
 print()
 mseTrainDegree2 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
 mseTestDegree2 = multipleLinRegTrain(multiDataTestFormat,mpg_test,2)
-print("Problem 5 MSE 2nd Order (Train): ", mseTrainDegree2)
-print("Problem 5 MSE 2nd Order (Test): ", mseTestDegree2)
+mseTrain = mseTrainDegree2[1]
+mseTest = mseTestDegree2[1]
+#ypred = mseTrain[0] + mseTrain[1]*multiDataTestFormat.iloc[:,1] + mseTrain[2]*multiDataTestFormat.iloc[:,2] + mseTrain[3]*multiDataTestFormat.iloc[:,3] + mseTrain[4]*multiDataTestFormat.iloc[:,4] + mseTrain[5]*multiDataTestFormat.iloc[:,5] + mseTrain[6]*multiDataTestFormat.iloc[:,6] + mseTrain[7]*multiDataTestFormat.iloc[:,7] + mseTrain[8]*multiDataTestFormat.iloc[:,8] + mseTrain[9]*multiDataTestFormat.iloc[:,9] + mseTrain[10]*multiDataTestFormat.iloc[:,10] + mseTrain[11]*multiDataTestFormat.iloc[:,11] + mseTrain[12]*multiDataTestFormat.iloc[:,12] + mseTrain[13]*multiDataTestFormat.iloc[:,13] + mseTrain*multiDataTestFormat.iloc[:,14]        
+
+
+print("Problem 5 MSE 2nd Order (Train): ", mseTrain)
+print("Problem 5 MSE 2nd Order (Test): ", mseTest)
 print()
 
-# Comment out 1 for now becuase it duplicating squared values
-#P=multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
-#Z = M[0]+M[1]*4 + M[2]*400 + M[3]*150 + M[4]*3500 + M[5]*8 + M[6]*81 + M[7]*1 +M[8]*4**2 + M[9]*400**2 + M[10]*150**2 + M[11]*3500**2 + M[12]*8**2 + M[13]*81**2 +M[14]*1**2    
-#print(Z)
-#val = multipleLinRegTrain(multiDataTestFormat,mpg_test,2)
-#print(val)
-#print("MPG for problem 8:",val)
-#M2=multipleLinReg(multiDataTestFormat,mpg_test)
+
 
 # Problem 6 - What values are we regressing on
+
+# Problem 7
+
+# Problem 8 - Will use return value from above
+print("Problem 8\n")
+weight = mseTestDegree2[0]
+prediction = weight[0] + weight[1]*4 + weight[2]*400 + weight[3]*150 +weight[4]*3500 + weight[5]*8 + weight[6]*81 + weight[7]*1 + weight[8]*4**2 + weight[9]*400**2 + weight[10]*150**2 + weight[11]*3500**2 + weight[12]*8**2 + weight[13]*81**2 +weight[14]*1**2
+print("The predicted MPG rating for 2nd Order Multivariate Regression is:", prediction)
+
+print("The predicted MPG rating for Logistic Regression is: ???")
 
