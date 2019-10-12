@@ -236,7 +236,7 @@ def linReg(x,y):
     #plt.xlabel('input')
     #plt.ylabel('mpg')
     #plt.show()
-#    
+    
     return degreeZero, degreeOne, degreeTwo, degreeThree
 
 def plotTrainData(xtrain, ytrain):
@@ -262,7 +262,7 @@ def plotTrainData(xtrain, ytrain):
     w222 = degreeThree[2]
     w333 = degreeThree[3]
     
-    print("Oth Order MSE: ???")
+    print("Oth Order MSE: (Training):", mean_squared_error(ytrain,degreeZero*biasTrain))
     print("1st Order MSE (Training):",mean_squared_error(ytrain,w0+xtrain*w1)) 
     print("2nd Order MSE (Training):",mean_squared_error(ytrain,w00+xtrain*w11 +w22*xtrain**2)) 
     print("3rd Order MSE (Training):",mean_squared_error(ytrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3)) 
@@ -304,7 +304,7 @@ def plotTestData(xtest,ytest):
     w333 = degreeThree[3]
     
     plt.scatter(xtest, ytest, color = "m", marker = "*", s = 30)
-    print("Oth Order MSE: ???")
+    print("Oth Order MSE (Testing):", mean_squared_error(ytest,degreeZero*biasTest))
     print("1st Order MSE (Testing):",mean_squared_error(ytest,w0+xtest*w1)) 
     print("2nd Order MSE (Testing):",mean_squared_error(ytest,w00+xtest*w11 +w22*xtest**2)) 
     print("3rd Order MSE (Testing):",mean_squared_error(ytest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3))
@@ -484,12 +484,14 @@ def multipleLinRegTrain(x,y,degree):
             mean_squared_error(y,ypred)
             
             return degreeTwo, mean_squared_error(y,ypred)
+        
 
 def multipleLinRegTest(xtest,ytest,degree):
     # degree 0
     
     # degree 2
     if (degree == 2):
+        
         values = multipleLinRegTrain(xtest,ytest,degree)
         w00 = values[0][0]
         w01 = values[0][1]
@@ -524,6 +526,8 @@ print("Problem 5 MSE 1st Order (Test): ",mseTestDegree1)
 print()
 mseTrainDegree2 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
 mseTestDegree2 = multipleLinRegTrain(multiDataTestFormat,mpg_test,2)
+
+# MSE values in second part
 mseTrain = mseTrainDegree2[1]
 mseTest = mseTestDegree2[1]
 #ypred = mseTrain[0] + mseTrain[1]*multiDataTestFormat.iloc[:,1] + mseTrain[2]*multiDataTestFormat.iloc[:,2] + mseTrain[3]*multiDataTestFormat.iloc[:,3] + mseTrain[4]*multiDataTestFormat.iloc[:,4] + mseTrain[5]*multiDataTestFormat.iloc[:,5] + mseTrain[6]*multiDataTestFormat.iloc[:,6] + mseTrain[7]*multiDataTestFormat.iloc[:,7] + mseTrain[8]*multiDataTestFormat.iloc[:,8] + mseTrain[9]*multiDataTestFormat.iloc[:,9] + mseTrain[10]*multiDataTestFormat.iloc[:,10] + mseTrain[11]*multiDataTestFormat.iloc[:,11] + mseTrain[12]*multiDataTestFormat.iloc[:,12] + mseTrain[13]*multiDataTestFormat.iloc[:,13] + mseTrain*multiDataTestFormat.iloc[:,14]        
@@ -547,3 +551,5 @@ print("The predicted MPG rating for 2nd Order Multivariate Regression is:", pred
 
 print("The predicted MPG rating for Logistic Regression is: ???")
 
+
+#ypred = mseTrain[0][0] + mseTrain[0][1]*lol.iloc[:,1] + mseTrain[0][2]*lol.iloc[:,2] + mseTrain[0][3]*lol.iloc[:,3] + mseTrain[0][4]*lol.iloc[:,4] + mseTrain[0][5]*lol.iloc[:,5] + mseTrain[0][6]*lol.iloc[:,6] + mseTrain[0][7]*lol.iloc[:,7] + mseTrain[0][8]*lol.iloc[:,8] + mseTrain[0][9]*lol.iloc[:,9] + mseTrain[0][10]*lol.iloc[:,10] + mseTrain[0][11]*lol.iloc[:,11] + mseTrain[0][12]*lol.iloc[:,12] + mseTrain[0][13]*lol.iloc[:,13] + mseTrain[0][14].lol.iloc[:,14]        
