@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Fri Oct 11 18:38:56 2019
+
+@author: armandnasserischool
+"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Oct 11 12:08:37 2019
 
 @author: armandnasserischool
@@ -202,30 +209,14 @@ def multipleLinRegTrain(x,y,degree):
            
             
             return degreeTwo, trainedMSE, testedMSE
+        
+mseTrainDegree = multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
+M = mseTrainDegree[0]
+
+
+multiVariatePrediction = M[0]+M[1]*4 + M[2]*400 + M[3]*150 + M[4]*3500 + M[5]*8 + M[6]*81 + M[7]*1 +M[8]*4**2 + M[9]*400**2 + M[10]*150**2 + M[11]*3500**2 + M[12]*8**2 + M[13]*81**2 +M[14]*1**2    
+print("The predicted MPG rating for a 2nd Order Multivariate Polynomial is: ",multiVariatePrediction)
+
+print("The predicted MPG rating for Logistic REgression is: ???")
             
-            
-
-# Still need to calculate Degree 0
-# REFACTOR NAMES
-
-print()
-print("Problem 5 MSE 0th Order (Train): ???")
-print("Problem 5 MSE 0th Order (Test): ???") 
-print() 
-mseTrainDegree1 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,1)  
-
-print("Problem 5 MSE 1st Order (Train): ",mseTrainDegree1[0])
-print("Problem 5 MSE 1st Order (Test): ",mseTrainDegree1[1])
-# Problem 5 Calculated MSE
-print()
-mseTrainDegree2 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,2)
-mseTestDegree2 = multipleLinRegTrain(multiDataTestFormat,mpg_test,2)
-
-# MSE values in second part
-mseTrain = mseTrainDegree2[1]
-mseTest = mseTrainDegree2[2]
-
-print("Problem 5 MSE 2nd Order (Train): ", mseTrain)   
-print("Problem 5 MSE 2nd Order (Test): ", mseTest)
-print()
-
+     
