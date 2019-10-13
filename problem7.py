@@ -19,7 +19,7 @@ dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True,
                               "Year","Origin","Model"])
 # Remove all ?'s
 dataset = dataset.drop(dataset[dataset['Horsepower'] == '?'].index)
-# Rest indexes
+# Reset indexes
 dataset = dataset.reset_index(drop=True)
 #option 2 but this will make Model column Nan
 #dataset=dataset.apply(pd.to_numeric, errors='coerce')

@@ -8,6 +8,7 @@ Created on Fri Oct 11 10:29:33 2019
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Import the dataset and add labels
 dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True, 
@@ -48,5 +49,5 @@ dataset.loc[np.logical_and(mpg > med, mpg < high), 'threshold']= "high"
 dataset.loc[mpg >= high, 'threshold'] = "very high" 
 
 # plotting data
-sns.pairplot(dataset.loc[:,dataset.columns != 'mpg'], hue='threshold')
-
+sns.pairplot(dataset.loc[:,dataset.columns != 'mpg'], hue='threshold',diag_kind='hist')
+plt.savefig('scatterPlotMatrix.png')

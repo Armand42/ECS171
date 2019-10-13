@@ -14,10 +14,7 @@ Created on Fri Oct 11 12:08:37 2019
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from pandas.plotting import scatter_matrix
 from numpy.linalg import inv
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error

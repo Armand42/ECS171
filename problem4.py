@@ -9,10 +9,7 @@ Created on Fri Oct 11 11:12:33 2019
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from pandas.plotting import scatter_matrix
 from numpy.linalg import inv
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.utils import shuffle
 
@@ -116,8 +113,7 @@ def linReg(x,y):
     invertedn1 = inv(n1Term1)
     n2Term2 = np.dot(n1Transposed,y)
     degreeOne = np.dot(invertedn1,n2Term2)
-    w0 = degreeOne[0]
-    w1 = degreeOne[1]
+    
 
     # degree 2
     # Applying the OLS Formula to acquire 2nd degree weights
@@ -127,10 +123,7 @@ def linReg(x,y):
     invertedn2 = inv(n22Term1)
     n22Term2 = np.dot(n2Transposed,y)
     degreeTwo = np.dot(invertedn2,n22Term2)
-    w00 = degreeTwo[0]
-    w11 = degreeTwo[1]
-    w22 = degreeTwo[2]
-
+    
     # degree 3 
     # Applying the OLS Formula to acquire 3rd degree weights
     n222 = np.column_stack((n111, x**2))
@@ -140,14 +133,11 @@ def linReg(x,y):
     invertedn3 = inv(n33Term1)
     n33Term2 = np.dot(n3Transposed,y)
     degreeThree = np.dot(invertedn3,n33Term2)
-    w000 = degreeThree[0]
-    w111 = degreeThree[1]
-    w222 = degreeThree[2]
-    w333 = degreeThree[3]
+   
     
     # Create a scatter plot for all degrees
     plt.scatter(x, y, color = "black", marker = "*", s = 30)
-     
+    
     return degreeZero, degreeOne, degreeTwo, degreeThree
 
 # This function will simultaneously display all the training graphs for the training data
@@ -173,10 +163,10 @@ def plotTrainData(xtrain, ytrain):
     w222 = degreeThree[2]
     w333 = degreeThree[3]
     # Calculating the mean squared error for each set of features
-    print("Oth Order MSE: (Training):", mean_squared_error(ytrain,degreeZero*biasTrain))
-    print("1st Order MSE (Training):",mean_squared_error(ytrain,w0+xtrain*w1)) 
-    print("2nd Order MSE (Training):",mean_squared_error(ytrain,w00+xtrain*w11 +w22*xtrain**2)) 
-    print("3rd Order MSE (Training):",mean_squared_error(ytrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3)) 
+    print("Oth Order MSE Yellow (Training):", mean_squared_error(ytrain,degreeZero*biasTrain))
+    print("1st Order MSE Red (Training):",mean_squared_error(ytrain,w0+xtrain*w1)) 
+    print("2nd Order MSE Blue (Training):",mean_squared_error(ytrain,w00+xtrain*w11 +w22*xtrain**2)) 
+    print("3rd Order MSE Green (Training):",mean_squared_error(ytrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3)) 
     
     # Sort data for ensuring correct regression displays
     xtrain = np.sort(xtrain)
@@ -215,18 +205,19 @@ def plotTestData(xtest,ytest):
     w222 = degreeThree[2]
     w333 = degreeThree[3]
     
-    plt.scatter(xtest, ytest, color = "m", marker = "*", s = 30)
+    plt.scatter(xtest, ytest, color = "black", marker = "*", s = 30)
     # Calculating the mean squared error for each set of features
-    print("Oth Order MSE (Testing):", mean_squared_error(ytest,degreeZero*biasTest))
-    print("1st Order MSE (Testing):",mean_squared_error(ytest,w0+xtest*w1)) 
-    print("2nd Order MSE (Testing):",mean_squared_error(ytest,w00+xtest*w11 +w22*xtest**2)) 
-    print("3rd Order MSE (Testing):",mean_squared_error(ytest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3))
+    print("Oth Order MSE Yellow (Testing):", mean_squared_error(ytest,degreeZero*biasTest))
+    print("1st Order MSE Red (Testing):",mean_squared_error(ytest,w0+xtest*w1)) 
+    print("2nd Order MSE Blue (Testing):",mean_squared_error(ytest,w00+xtest*w11 +w22*xtest**2)) 
+    print("3rd Order MSE Green (Testing):",mean_squared_error(ytest,w000+xtest*w111+ w222*xtest**2 + w333*xtest**3))
    
     # Sort for ensuring correct regression displays
     xtest = np.sort(xtest)
     ytest = np.sort(ytest)
     
     # Plot all the testing graphs
+    
     plt.axhline(y=degreeZero, color='y')
     plt.plot(xtest,w0+xtest*w1, color = "red")
     plt.plot(xtest,w00+xtest*w11 +w22*xtest**2, color = "blue")
