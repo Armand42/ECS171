@@ -19,10 +19,7 @@ from numpy.linalg import inv
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.utils import shuffle
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LogisticRegression
-
-
 
 # Import the dataset and add labels
 dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True, 
@@ -111,6 +108,7 @@ multiDataTrainFormat = multiDataTrain.iloc[:,1:8]
 multiDataTestFormat = multiDataTest.iloc[:,1:8]
 
 # Returns a sqaured dataset for the training data
+# This function is used purely for formanting a 292x15 dataset
 def degreeTwoHelperTrain(df):
     
     df.insert(0, "Bias",biasTrain, True)
@@ -125,6 +123,7 @@ def degreeTwoHelperTrain(df):
     
     return df
 # Returns a squared dataset for the testing data
+# This function is used purely for formanting a 100x15 dataset
 def degreeTwoHelperTest(df):
     
     df.insert(0, "Bias",biasTest, True)
@@ -211,6 +210,9 @@ M = mseTrainDegree[0]
 # Printing Regression Results
 multiVariatePrediction = M[0]+M[1]*4 + M[2]*400 + M[3]*150 + M[4]*3500 + M[5]*8 + M[6]*81 + M[7]*1 +M[8]*4**2 + M[9]*400**2 + M[10]*150**2 + M[11]*3500**2 + M[12]*8**2 + M[13]*81**2 +M[14]*1**2    
 print("The predicted MPG rating for a 2nd Order Multivariate Polynomial is: ",multiVariatePrediction)
+
+
+# Needed to include all the code for Multivariate Polynomial Regression
 
 # Adding non-shuffled values for logistic regression
 mpg2 = dataset.iloc[:,0].values

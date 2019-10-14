@@ -100,6 +100,7 @@ multiDataTrainFormat = multiDataTrain.iloc[:,1:8]
 multiDataTestFormat = multiDataTest.iloc[:,1:8]
 
 # Returns a sqaured dataset for the training data
+# This function is used purely for formanting a 292x15 dataset
 def degreeTwoHelperTrain(df):
     
     df.insert(0, "Bias",biasTrain, True)
@@ -114,6 +115,7 @@ def degreeTwoHelperTrain(df):
     
     return df
 # Returns a squared dataset for the testing data
+# This function is used purely for formanting a 100x15 dataset    
 def degreeTwoHelperTest(df):
     
     df.insert(0, "Bias",biasTest, True)
