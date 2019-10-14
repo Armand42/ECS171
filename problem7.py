@@ -21,9 +21,9 @@ dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True,
 dataset = dataset.drop(dataset[dataset['Horsepower'] == '?'].index)
 # Reset indexes
 dataset = dataset.reset_index(drop=True)
-#option 2 but this will make Model column Nan
-#dataset=dataset.apply(pd.to_numeric, errors='coerce')
+# Typecast Horsepower column back to float
 dataset['Horsepower'] = dataset['Horsepower'].apply(pd.to_numeric, errors='coerce')
+
 # Assign each column as a set of features
 mpg = dataset.iloc[:,0].values
 cyl = dataset.iloc[:,1].values
@@ -61,6 +61,7 @@ scaler.fit(xFeatures)
 scaledData = scaler.transform(xFeatures)
 
 yLabel = dataset['threshold']
+
 # Splitting up the test and train data with normalized dataset
 
 X_train = scaledData[0:292]
@@ -84,4 +85,5 @@ y_pred=logreg.predict(X_test)
 
 print("Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))
 print("Precision (Testing):",precision_score(y_test, y_pred, average = 'micro'))
+
 

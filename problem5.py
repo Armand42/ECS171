@@ -137,9 +137,16 @@ def degreeOneHelper(df):
 def multipleLinRegTrain(x,y,degree):
     
     # degree 0
+    if (degree == 0):
+        # Simply the mean of the mpg values
+        degreeZeroTrain = mpg_train.mean()
+        degreeZeroTest = mpg_test.mean()
+        mseTrain = mean_squared_error(mpg_train,degreeZeroTrain*biasTrain)
+        mseTest = mean_squared_error(mpg_test,degreeZeroTest*biasTest)
+        return mseTrain,mseTest
     
     # degree 1
-    if (degree == 1):
+    elif (degree == 1):
         # Append ones to the dataset for training values
         addOnes = np.append(arr = np.ones((292, 1)).astype(int), values = x, axis = 1)  
         # Applying the OLS Formula to acquire 1st degree weights
@@ -196,8 +203,12 @@ def multipleLinRegTrain(x,y,degree):
 
 # Printing out the MSE values for 0th,1st, and 2nd order 
 print()
-print("Problem 5 MSE 0th Order (Train): ???")
-print("Problem 5 MSE 0th Order (Test): ???") 
+mseTrainDegree0 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,0)
+mseTestDegree0 = multipleLinRegTrain(multiDataTestFormat,mpg_test,0)
+degreeZeroTrain = mseTrainDegree0[0]
+degreeZeroTest = mseTrainDegree0[1]
+print("Problem 5 MSE 0th Order (Train):",degreeZeroTrain)
+print("Problem 5 MSE 0th Order (Test):", degreeZeroTest) 
 print() 
 mseTrainDegree1 = multipleLinRegTrain(multiDataTrainFormat,mpg_train,1)  
 print("Problem 5 MSE 1st Order (Train): ",mseTrainDegree1[0])
@@ -210,4 +221,5 @@ mseTest = mseTrainDegree2[2]
 print("Problem 5 MSE 2nd Order (Train): ", mseTrain)   
 print("Problem 5 MSE 2nd Order (Test): ", mseTest)
 print()
+
 
