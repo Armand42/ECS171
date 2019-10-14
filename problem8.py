@@ -209,7 +209,7 @@ M = mseTrainDegree[0]
 
 # Printing Regression Results
 multiVariatePrediction = M[0]+M[1]*4 + M[2]*400 + M[3]*150 + M[4]*3500 + M[5]*8 + M[6]*81 + M[7]*1 +M[8]*4**2 + M[9]*400**2 + M[10]*150**2 + M[11]*3500**2 + M[12]*8**2 + M[13]*81**2 +M[14]*1**2    
-print("The predicted MPG rating for a 2nd Order Multivariate Polynomial is: ",multiVariatePrediction)
+print("The predicted MPG rating for a 2nd Order Multivariate Polynomial is:",multiVariatePrediction)
 
 
 # Needed to include all the code for Multivariate Polynomial Regression
@@ -252,6 +252,7 @@ logreg.fit(X_train,y_train)
 # Calculating the predicted values
 y_pred = logreg.predict(X_test)
 
+# Test data given from problem description
 testData = np.array([4,400,150,3500,8,81,1])
 
 predictData = logreg.predict(testData.reshape(1,7))

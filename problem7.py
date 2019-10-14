@@ -9,6 +9,7 @@ Created on Sat Oct 12 19:16:02 2019
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.utils import shuffle
 from sklearn.metrics import precision_score
 from sklearn.preprocessing import MinMaxScaler
 
@@ -20,6 +21,7 @@ dataset = pd.read_csv('auto-mpg.data', delim_whitespace=True,
 dataset = dataset.drop(dataset[dataset['Horsepower'] == '?'].index)
 # Reset indexes
 dataset = dataset.reset_index(drop=True)
+
 # Typecast Horsepower column back to float
 dataset['Horsepower'] = dataset['Horsepower'].apply(pd.to_numeric, errors='coerce')
 
@@ -49,8 +51,10 @@ dataset.loc[np.logical_and(mpg > med, mpg < high), 'threshold']= 2
 # very high
 dataset.loc[mpg >= high, 'threshold'] = 3 
 
+
+dataset = shuffle(dataset,random_state = 0)
 # Splitting up the data
-xFeatures = dataset.iloc[:,1:8].values 
+xFeatures = dataset.iloc[:,1:8].values
 
 # Applying normalization to the dataset
 scaler = MinMaxScaler()
@@ -63,23 +67,23 @@ scaledData = scaler.transform(xFeatures)
 yLabel = dataset['threshold']
 
 # Splitting up the test and train data with normalized dataset
-X_train = xFeatures[0:292]
+X_train = scaledData[0:292]
 y_train = yLabel[0:292]
 
-X_test = xFeatures[292:392]
+X_test = scaledData[292:392]
 y_test = yLabel[292:392]
 
 # Applying the Logistic Regressor to the training and testing data
 logregTrain = LogisticRegression()
-logregTest = LogisticRegression()
+#logregTest = LogisticRegression()
 
 # Fitting the regression onto the appropriate data
 train = logregTrain.fit(X_train,y_train)
-test = logregTest.fit(X_test,y_test)
+#test = logregTest.fit(X_test,y_test)
 
 # Calculating the predicted values
 y_predTrain=logregTrain.predict(X_train)
-y_pred=logregTest.predict(X_test)
+y_pred=logregTrain.predict(X_test)
 
 # Printing out the calculated precision values
 print("Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))

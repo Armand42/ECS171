@@ -176,8 +176,6 @@ def plotTrainData(xtrain, ytrain):
     plt.plot(xtrain,w0+xtrain*w1, color = "red")
     plt.plot(xtrain,w00+xtrain*w11 +w22*xtrain**2, color = "blue")
     plt.plot(xtrain,w000+xtrain*w111+ w222*xtrain**2 + w333*xtrain**3, color = "green")
-    #plt.title('(Training set)')
-    #plt.xlabel('input')
     plt.ylabel('mpg')
     
     plt.show()
