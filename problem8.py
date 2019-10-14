@@ -211,7 +211,6 @@ M = mseTrainDegree[0]
 # Printing Regression Results
 multiVariatePrediction = M[0]+M[1]*4 + M[2]*400 + M[3]*150 + M[4]*3500 + M[5]*8 + M[6]*81 + M[7]*1 +M[8]*4**2 + M[9]*400**2 + M[10]*150**2 + M[11]*3500**2 + M[12]*8**2 + M[13]*81**2 +M[14]*1**2    
 print("The predicted MPG rating for a 2nd Order Multivariate Polynomial is: ",multiVariatePrediction)
-print("The predicted MPG rating for Logistic Regression is: ???")
 
 # Adding non-shuffled values for logistic regression
 mpg2 = dataset.iloc[:,0].values
@@ -240,16 +239,9 @@ dataset.loc[mpg2 >= high2, 'threshold'] = 3
 # Splitting up the data
 xFeatures = dataset.iloc[:,1:8].values 
 
-# Applying normalization to the dataset
-scaler = MinMaxScaler()
-scaled = scaler.fit(xFeatures)
-
-# Saving scaled dataset
-scaledData = scaler.transform(xFeatures)
-
 yLabel = dataset['threshold']
 # Splitting up the test and train data with normalized dataset
-X_train,X_test,y_train,y_test = train_test_split(scaledData,yLabel,test_size=0.2552,random_state=0)
+X_train,X_test,y_train,y_test = train_test_split(xFeatures,yLabel,test_size=0.2552,random_state=0)
 
 # Applying the Logistic Regressor to the training data
 logreg = LogisticRegression()
@@ -260,8 +252,10 @@ y_pred = logreg.predict(X_test)
 
 testData = np.array([4,400,150,3500,8,81,1])
 
-predictData = logreg.predict(testData.reshape(1, -1))
-print(predictData)
+predictData = logreg.predict(testData.reshape(1,7))
+# Prints out the mpg category based on 0,1,2,3 = low,med,high,very high
+print("The predicted MPG rating for Logistic Regression is:", predictData[0])
+
 
 
 
