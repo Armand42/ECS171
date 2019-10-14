@@ -254,7 +254,16 @@ testData = np.array([4,400,150,3500,8,81,1])
 
 predictData = logreg.predict(testData.reshape(1,7))
 # Prints out the mpg category based on 0,1,2,3 = low,med,high,very high
-print("The predicted MPG rating for Logistic Regression is:", predictData[0])
+if (predictData[0] == 0):
+    result = 'low'
+elif(predictData[0] == 1):
+    result = 'med'
+elif(predictData[0] == 2):
+     result = 'high'
+else:
+    result = 'very high'
+     
+print("The predicted MPG rating for Logistic Regression is:", result)
 
 
 
