@@ -259,6 +259,7 @@ logreg.fit(X_train,y_train)
 y_pred = logreg.predict(X_test)
 
 testData = np.array([4,400,150,3500,8,81,1])
+
 predictData = logreg.predict(testData.reshape(1, -1))
 print(predictData)
 

@@ -55,21 +55,33 @@ xFeatures = dataset.iloc[:,1:8].values
 
 # Applying normalization to the dataset
 scaler = MinMaxScaler()
-scaled = scaler.fit(xFeatures)
+scaler.fit(xFeatures)
 
 # Saving scaled dataset
 scaledData = scaler.transform(xFeatures)
 
 yLabel = dataset['threshold']
 # Splitting up the test and train data with normalized dataset
-X_train,X_test,y_train,y_test=train_test_split(scaledData,yLabel,test_size=0.2552,random_state=0)
+
+X_train = scaledData[0:292]
+y_train = yLabel[0:292]
+
+X_test = xFeatures[292:392]
+y_test = yLabel[292:392]
+
+#X_train,X_test,y_train,y_test=train_test_split(scaledData,yLabel,test_size=0.2552,random_state=0)
 
 # Applying the Logistic Regressor to the training data
 logreg = LogisticRegression()
-logreg.fit(X_train,y_train)
+
+
+train = logreg.fit(X_train,y_train)
+test = logreg.fit(X_test,y_test)
 
 # Calculating the predicted values
+y_predTrain=logreg.predict(X_train)
 y_pred=logreg.predict(X_test)
 
-print("Precision:",precision_score(y_test, y_pred, average = 'micro'))
+print("Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))
+print("Precision (Testing):",precision_score(y_test, y_pred, average = 'micro'))
 

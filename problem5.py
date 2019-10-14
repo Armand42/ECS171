@@ -137,7 +137,6 @@ def degreeOneHelper(df):
 def multipleLinRegTrain(x,y,degree):
     
     # degree 0
-    # not done yet
     
     # degree 1
     if (degree == 1):
