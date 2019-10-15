@@ -51,7 +51,7 @@ dataset.loc[np.logical_and(mpg > med, mpg < high), 'threshold']= 2
 # very high
 dataset.loc[mpg >= high, 'threshold'] = 3 
 
-
+# Shuffling the dataset
 dataset = shuffle(dataset,random_state = 0)
 # Splitting up the data
 xFeatures = dataset.iloc[:,1:8].values

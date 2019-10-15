@@ -135,7 +135,7 @@ def degreeOneHelper(df):
     df = df.iloc[:,:8]
     return df
 
-
+# Returns the MSE for Train/Test data for all 3 degrees
 def multipleLinRegTrain(x,y,degree):
     
     # degree 0
