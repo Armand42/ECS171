@@ -56,7 +56,7 @@ yLabel = dataset['threshold']
 X_train,X_test,y_train,y_test=train_test_split(xFeatures,yLabel,test_size=0.2552,random_state=0)
 
 # Applying the Logistic Regressor to the training data
-logreg = LogisticRegression()
+logreg = LogisticRegression(multi_class='ovr')
 
 train = logreg.fit(X_train,y_train)
 test = logreg.fit(X_test,y_test)
@@ -64,5 +64,8 @@ test = logreg.fit(X_test,y_test)
 y_predTrain=logreg.predict(X_train)
 y_pred=logreg.predict(X_test)
 
-print("Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))
-print("Precision (Testing):",precision_score(y_test, y_pred, average = 'micro'))
+# Printing out the calculated precision values
+print("Overall Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))
+print("Separate Bin Precision (Training):",precision_score(y_train, y_predTrain, average = None))
+print("Overall Precision (Testing):",precision_score(y_test, y_pred, average = 'micro'))
+print("Separate Bin Precision (Testing):",precision_score(y_test, y_pred, average = None))

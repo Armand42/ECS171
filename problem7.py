@@ -74,7 +74,7 @@ X_test = scaledData[292:392]
 y_test = yLabel[292:392]
 
 # Applying the Logistic Regressor to the training and testing data
-logregTrain = LogisticRegression()
+logregTrain = LogisticRegression(multi_class='ovr')
 #logregTest = LogisticRegression()
 
 # Fitting the regression onto the appropriate data
@@ -86,7 +86,8 @@ y_predTrain=logregTrain.predict(X_train)
 y_pred=logregTrain.predict(X_test)
 
 # Printing out the calculated precision values
-print("Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))
-print("Precision (Testing):",precision_score(y_test, y_pred, average = 'micro'))
-
+print("Overall Precision (Training):",precision_score(y_train, y_predTrain, average = 'micro'))
+print("Separate Bin Precision (Training):",precision_score(y_train, y_predTrain, average = None))
+print("Overall Precision (Testing):",precision_score(y_test, y_pred, average = 'micro'))
+print("Separate Bin Precision (Testing):",precision_score(y_test, y_pred, average = None))
 
