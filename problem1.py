@@ -18,23 +18,45 @@ warnings.filterwarnings("ignore")
 dataset = pd.read_csv('yeast.data', delim_whitespace=True, 
                        names=["MCG","GVH","ALM","MIT","ERL","POX","VAC","NUC","Class Distribution"])
 # X features
-
 X = dataset.drop(columns = 'Class Distribution')
+
 # One Class SVM
-clf = OneClassSVM(gamma='auto').fit(X)
-clf.predict(X)
-clf.fit(X)
-#print(X)
+def svmOutlier(X):
+    clf = OneClassSVM(gamma='auto').fit(X)
+    clf.fit(X)
+    # Removing all the outliers
+    # Prints the new dataset of removed outliers 
+    index = 0
+    num_out = 0
+    for i in clf.predict(X):
+        if (i < 0 and index < len(X)):
+            num_out += 1
+            X = X.drop(X.index[index])
+        index = index + 1
+    print("The percentage of outliers for SVM detection is: ",num_out/1484 * 100,"%")
+    return num_out
+
+
 # Isolation Forest
-isol = IsolationForest(n_estimators=8, warm_start=True)
-isol.fit(X)
+def isolOutlier(X):
+    isol = IsolationForest(random_state = 0)
+    isol.fit(X)
 # Removing all the outliers
 # Prints the new dataset of removed outliers 
-index = 0
-for i in isol.predict(X):
-    if (i < 0 and index < len(X)):
-        X = X.drop(X.index[index])
-    index = index + 1
-print(X)
+    index = 0
+    num_out = 0
+    for i in isol.predict(X):
+        if (i < 0 and index < len(X)):
+            num_out += 1
+            X = X.drop(X.index[index])
+        index = index + 1
+    print("The percentage of outliers for Isolation Forest Detection are: ",num_out/1484 * 100,"%")
+    return num_out
+
+# Print the percentange of outliers
+svmOutlier(X)
+isolOutlier(X)
+
+
 
 
