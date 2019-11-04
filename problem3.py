@@ -66,18 +66,7 @@ X = dataset.iloc[:,:].values
 X = dataset.drop(columns = 'Class Distribution')
 
 
-isol = IsolationForest(random_state = 0)
-isol.fit(X)
-# Removing all the outliers
-# Prints the new dataset of removed outliers 
-index = 0
-num_out = 0
-for i in isol.predict(X):
-    if (i < 0 and index < len(X)):
-        num_out += 1
-        X = X.drop(X.index[index])
-        y = y.drop(y.index[index])
-    index = index + 1
+
 
 #print(X.shape)
 #print(y.shape)
@@ -105,7 +94,7 @@ y = pd.get_dummies(y)
 
 
 # Splitting the dataset into the Training set and Test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.34, random_state = 0)
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 1, random_state = 0)
 
 
 # Initialising the ANN
@@ -128,12 +117,14 @@ classifier.compile(optimizer = 'sgd', loss = 'mean_squared_error', metrics = ['a
 #classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall])
 
 
-history = classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 300, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
-test_loss = [1-x for x in history.history['val_acc']]
+history = classifier.fit(X, y, batch_size = 10, nb_epoch = 300, verbose=1, callbacks = [weightCall], validation_data = (X,y))
+#test_loss = [1-x for x in history.history['val_acc']]
 train_loss = [1-x for x in history.history['acc']]
-
+#print(w1)
 #train_loss = history.history['acc']
 #test_loss = history.history['val_acc']
+
+# Still need to get weights
 
 plt.title("Weights per iteration of last layer")
 plt.xlabel("Epochs")
@@ -145,13 +136,10 @@ plt.plot(w3, label = "w3")
 plt.legend()
 plt.show()
 
-plt.title("Training & Testing Error per Iteration")
+plt.title("Training Error per Iteration")
 plt.plot(train_loss, label = "Train Loss", color = "green")
-plt.plot(test_loss, label = "Test Loss", color = "blue")
+#plt.plot(test_loss, label = "Test Loss", color = "blue")
 plt.xlabel("Epochs")
-plt.ylabel("Ratio")
+plt.ylabel("Training Error")
 plt.legend()
 plt.show()
-
-
-
