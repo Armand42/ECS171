@@ -117,29 +117,19 @@ classifier.compile(optimizer = 'sgd', loss = 'mean_squared_error', metrics = ['a
 #classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall])
 
 
-history = classifier.fit(X, y, batch_size = 10, nb_epoch = 300, verbose=1, callbacks = [weightCall], validation_data = (X,y))
+history = classifier.fit(X, y, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall], validation_data = (X,y))
 #test_loss = [1-x for x in history.history['val_acc']]
 train_loss = [1-x for x in history.history['acc']]
-#print(w1)
+
 #train_loss = history.history['acc']
 #test_loss = history.history['val_acc']
 
 # Still need to get weights
+print("Final Hidden Layer Weights")
+print("bias:",bias[-1])
+print("w1:",w1[-1])
+print("w2:",w2[-1])
+print("w3:",w3[-1])
+print("Train Loss:",train_loss[-1])
 
-plt.title("Weights per iteration of last layer")
-plt.xlabel("Epochs")
-plt.ylabel("Weights")
-plt.plot(bias, label = "bias")
-plt.plot(w1, label = "w1")
-plt.plot(w2, label = "w2")
-plt.plot(w3, label = "w3")
-plt.legend()
-plt.show()
 
-plt.title("Training Error per Iteration")
-plt.plot(train_loss, label = "Train Loss", color = "green")
-#plt.plot(test_loss, label = "Test Loss", color = "blue")
-plt.xlabel("Epochs")
-plt.ylabel("Training Error")
-plt.legend()
-plt.show()

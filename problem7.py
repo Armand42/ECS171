@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Mon Nov  4 17:21:02 2019
+
+@author: armandnasserischool
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Wed Oct 30 11:48:53 2019
 
 @author: armandnasserischool
@@ -11,9 +19,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn import preprocessing
+from sklearn.model_selection import GridSearchCV
 import keras
 from matplotlib import pyplot as plt
 from keras.models import Sequential
+from keras.wrappers.scikit_learn import KerasClassifier
 from keras.layers import Dense
 from sklearn.utils import shuffle
 from sklearn.ensemble import IsolationForest
@@ -22,7 +32,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # NEED ONE HOT ENCODER
-np.random.seed(0)
+
 dataset = pd.read_csv('yeast.data', delim_whitespace=True, 
                        names=["Sequence Name","MCG","GVH","ALM","MIT","ERL","POX","VAC","NUC","Class Distribution"])
 
@@ -79,79 +89,39 @@ for i in isol.predict(X):
         y = y.drop(y.index[index])
     index = index + 1
 
-#print(X.shape)
-#print(y.shape)
 
-
-#print(X)
-# Encoding categorical data
-#labelencoder = LabelEncoder()
-#y = labelencoder.fit_transform(y)
-#print(y)
-
-#print(y)
-# One hot encoder to binarization
-#onehotencoder = OneHotEncoder(categorical_features = 10)
 y = pd.get_dummies(y)
-#print(y)
-#print(y.shape)
-#y = onehotencoder.fit_transform(y).toarray()
 
-# Input dimensions for new encoded data
-#newX = X[:,10:18]
-#newY = X[:,0:10]
-
-#print(X.shape)
-
-
-# Splitting the dataset into the Training set and Test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.34, random_state = 0)
 
 
-# Initialising the ANN
-classifier = Sequential()
-# Drop Sequence Column!
-# Adding the input layer and the first hidden layer
-classifier.add(Dense(output_dim = 3, activation = 'sigmoid', input_dim = 8))
-# Adding the second hidden layer
-classifier.add(Dense(output_dim = 3, activation = 'sigmoid'))
-# Adding the output layer
-classifier.add(Dense(output_dim = 10, activation = 'sigmoid'))
+# Dynamically create a classifier
+def createClassifier(X_train, y_train, inp=8, nodes=3, epochs=100, batch=10, outLayer=10, numHidden=2):
+    # Initialising the ANN
+    classifier = Sequential()
+    # First Hidden Layer
+    classifier.add(Dense(output_dim = nodes, activation = 'relu', input_dim = inp))
+    for dense in range(numHidden - 1):
+        classifier.add(Dense(output_dim = nodes, activation = 'relu', input_dim = inp))
 
+    # Adding the output layer
+    classifier.add(Dense(output_dim = outLayer, activation = 'softmax'))
+    
+    # Compiling the ANN
+    classifier.compile(optimizer = 'sgd', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
-#print_weights = LambdaCallback(on_epoch_end=lambda batch, logs: print(classifier.layers[2].get_weights()))
+    history = classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
+    test_loss = [1-x for x in history.history['val_acc']]
+    train_loss = [1-x for x in history.history['acc']]
 
-# Compiling the ANN
-classifier.compile(optimizer = 'sgd', loss = 'mean_squared_error', metrics = ['accuracy'])
+    plt.title("Training & Testing Error per Iteration")
+    plt.plot(train_loss, label = "Train Loss", color = "green")
+    plt.plot(test_loss, label = "Test Loss", color = "blue")
+    plt.xlabel("Epochs")
+    plt.ylabel("Ratio")
+    plt.legend()
+    plt.show()
+    return history 
 
-# Fitting the ANN to the Training set
-#classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall])
-
-
-history = classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 300, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
-test_loss = [1-x for x in history.history['val_acc']]
-train_loss = [1-x for x in history.history['acc']]
-
-#train_loss = history.history['acc']
-#test_loss = history.history['val_acc']
-
-plt.title("Weights per iteration of last layer")
-plt.xlabel("Epochs")
-plt.ylabel("Weights")
-plt.plot(bias, label = "bias")
-plt.plot(w1, label = "w1")
-plt.plot(w2, label = "w2")
-plt.plot(w3, label = "w3")
-plt.legend()
-plt.show()
-
-plt.title("Training & Testing Error per Iteration")
-plt.plot(train_loss, label = "Train Loss", color = "green")
-plt.plot(test_loss, label = "Test Loss", color = "blue")
-plt.xlabel("Epochs")
-plt.ylabel("Ratio")
-plt.legend()
-plt.show()
-
-
+createClassifier(X_train, y_train,8,3,100,10,10,2)
 
