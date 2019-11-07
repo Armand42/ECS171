@@ -22,12 +22,13 @@ from matplotlib import pyplot as plt
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.ensemble import IsolationForest
+from sklearn.utils import shuffle
 import warnings
 warnings.filterwarnings("ignore")
 # Setting Seed and Importing the Dataset
 np.random.seed(0)
-dataset = pd.read_csv('yeast.data', delim_whitespace=True, 
-                       names=["Sequence Name","MCG","GVH","ALM","MIT","ERL","POX","VAC","NUC","Class Distribution"])
+dataset = shuffle(pd.read_csv('yeast.data', delim_whitespace=True, 
+                       names=["Sequence Name","MCG","GVH","ALM","MIT","ERL","POX","VAC","NUC","Class Distribution"]),random_state=0)
 # Global weight and bias arrays
 extractedCYT = []
 bias = []
@@ -71,9 +72,6 @@ y = pd.get_dummies(y)
 # Splitting the dataset into the Training set and Test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.34, random_state = 0)
 
-
-
-
 # Dynamically create a classifier
 def createClassifier(X_train, y_train, inp, nodes, epochs, batch, outLayer, numHidden):
     # Initialising the ANN
@@ -100,7 +98,7 @@ def performGridSearch(classifier):
         for n in nodes:
             # Fit the classifier for each combination and calculate the testing error simulataneously
             model = createClassifier(X_train,y_train,8,n,100,10,10,hid)
-            history = model.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
+            history = model.fit(X_train, y_train, batch_size = 1, nb_epoch = 100, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
             test_loss = [1-x for x in history.history['val_acc']]
             train_loss = [1-x for x in history.history['acc']]
             temp = 1 - model.evaluate(X_train,y_train)[1]
@@ -114,8 +112,6 @@ def performGridSearch(classifier):
             print("Hidden value is:", hid)
             print("Node value is :", n)
             
-            
-           
     #Plotting the Weights per iteration of the last layer
     plt.title("Training & Testing Error per Iteration")
     plt.plot(train_loss, label = "Train Loss", color = "green")
@@ -128,7 +124,14 @@ def performGridSearch(classifier):
     return errorValues
 
 # Instantiating a classifier with sample data
-testModel = createClassifier(X_train, y_train,8,3,100,10,10,2)
+testModel = createClassifier(X_train, y_train,8,3,100,1,10,2)
 
 result = performGridSearch(testModel)
+
+# Print the most optimal combination and testing error
+print()
+print("The 12 testing errors for all the combinations of Hidden Values and Number of Nodes are:")
+print(result)
+print("The most optimal configuration is (3, 12) with testing error of: ",np.amin(result))
+
 
