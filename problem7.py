@@ -71,8 +71,11 @@ y = pd.get_dummies(y)
 # Splitting the dataset into the Training set and Test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.34, random_state = 0)
 
+
+
+
 # Dynamically create a classifier
-def createClassifier(X_train, y_train, inp=8, nodes=3, epochs=100, batch=10, outLayer=10, numHidden=2):
+def createClassifier(X_train, y_train, inp, nodes, epochs, batch, outLayer, numHidden):
     # Initialising the ANN
     classifier = Sequential()
     # First Hidden Layer
@@ -83,12 +86,37 @@ def createClassifier(X_train, y_train, inp=8, nodes=3, epochs=100, batch=10, out
     classifier.add(Dense(output_dim = outLayer, activation = 'softmax'))
     # Compiling the ANN
     classifier.compile(optimizer = 'sgd', loss = 'binary_crossentropy', metrics = ['accuracy'])
-    # Fitting the ANN to the Training set and calling the callback function to calculate the weights per iteration
-    history = classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
-    # Calculating the training and test loss per iteration
-    test_loss = [1-x for x in history.history['val_acc']]
-    train_loss = [1-x for x in history.history['acc']]
-    # Plotting the Weights per iteration of the last layer
+    # Return a classifier object
+    return classifier
+
+# Function to iteratively perform grid search and return the testing error values
+def performGridSearch(classifier):
+    errorValues = []
+    combination = []
+    # Layers and Nodes
+    numHidden = [1,2,3]
+    nodes = [3,6,9,12]
+    for hid in numHidden:
+        for n in nodes:
+            # Fit the classifier for each combination and calculate the testing error simulataneously
+            model = createClassifier(X_train,y_train,8,n,100,10,10,hid)
+            history = model.fit(X_train, y_train, batch_size = 10, nb_epoch = 100, verbose=1, callbacks = [weightCall], validation_data = (X_test,y_test))
+            test_loss = [1-x for x in history.history['val_acc']]
+            train_loss = [1-x for x in history.history['acc']]
+            temp = 1 - model.evaluate(X_train,y_train)[1]
+            
+            # Append testing errors and combinations to arrays
+            testingError = temp
+            errorValues.append(testingError)
+            combination.append((hid,n))
+            # Print out the Hidden Layer & Node Combination & the Testing Error
+            print("The testing error for",hid,"hidden layers and",n,"nodes is:",testingError)
+            print("Hidden value is:", hid)
+            print("Node value is :", n)
+            
+            
+           
+    #Plotting the Weights per iteration of the last layer
     plt.title("Training & Testing Error per Iteration")
     plt.plot(train_loss, label = "Train Loss", color = "green")
     plt.plot(test_loss, label = "Test Loss", color = "blue")
@@ -96,8 +124,11 @@ def createClassifier(X_train, y_train, inp=8, nodes=3, epochs=100, batch=10, out
     plt.ylabel("Ratio")
     plt.legend()
     plt.show()
-    return history 
+          
+    return errorValues
 
 # Instantiating a classifier with sample data
-createClassifier(X_train, y_train,8,3,100,10,10,2)
+testModel = createClassifier(X_train, y_train,8,3,100,10,10,2)
+
+result = performGridSearch(testModel)
 
